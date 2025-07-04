@@ -1,0 +1,539 @@
+from datetime import datetime
+
+
+
+"""
+
+How to run the snakemake workflow:
+
+    cd <..>/SARS-CoV-2-GenomicsEnhancedContactTracing-Code/graph_and_CER_workflow
+    conda env update -n cer_analysis --file environment.yml
+    conda activate cer_analysis
+    snakemake --cores 7 -n
+
+
+How to generate the workflow.pdf:
+
+    snakemake --forceall --dag | dot -Tpdf > workflow_full.pdf
+    snakemake --forceall --rulegraph | dot -Tpdf > workflow.pdf
+
+
+How to save conda enviroment changes:
+    conda env export > environment.yml
+
+
+This workflow takes the contact tracing data and genetic data from SARS-CoV-2 cases 
+from Düsseldorf between 02.2021 and 12.2021, combines them to an
+integrated case graph, and calutes diferent metrics including the 
+cluster explanation rate (CER)
+
+
+# Code dicertory structure
+
+code/
+├── assemble_data
+│   ├── add_outbreaks_to_graph.py
+│   ├── directed_graph.py
+│   ├── find_case_to_sample_mapping.py
+│   ├── prefilter_genetic_data.py
+│   └── prefilter_graph.py
+├── cluster
+│   ├── cluster_length_stats.py
+│   ├── clusters.py
+│   ├── clusters_stats.py
+│   └── cluster_supplement.py
+├── downsampling_analysis
+│   ├── downsampled_CER_graphs.py
+│   ├── downsampled_clusters.py
+│   └── downsampled_stats.py
+├── draw_graph
+│   ├── draw_graphs_base_functions.py
+│   ├── draw_graphs_clusters.py
+│   └── draw_graphs_other.py
+├── infection_source_rates
+│   ├── infection_source_rate_ignoring_sequences.py
+│   ├── infection_source_rate.py
+│   ├── infection_source_rate_stats_allcombs_all.py
+│   ├── infection_source_rate_stats_allcombs.py
+│   └── infection_source_rate_stats.py
+├── other_stats
+│   ├── other_stats.py
+│   ├── same_address_component_sizes_stats.py
+│   ├── sanity_check_cases_contactcounts.py
+│   ├── supplementary_table_IntegratedInfectionContexts.py
+│   └── symptom_start_stats.py
+└── util_functions.py
+
+
+
+"""
+
+# The different input parameters of getic threshold for cluster genereation
+cluster_types = [
+    "connected_components_0",
+    "connected_components_0_1",
+]
+
+# The different input parameters of intermediate cases when calculating the CER
+jump_distance = [
+    "jump_0",
+    "jump_1",
+    "jump_2",
+]
+
+
+#TODO this could be prettier and mybe generalized
+# All edge type combinations
+edge_types = [
+    "TA","AN","IB","O","KP",
+    "TA_AN","TA_IB","TA_O","TA_KP","AN_IB","AN_O","AN_KP","IB_O","IB_KP","O_KP",
+    "TA_AN_IB","TA_AN_O","TA_AN_KP","TA_IB_O","TA_IB_KP","TA_O_KP","AN_IB_O","AN_IB_KP","AN_O_KP","IB_O_KP",
+    "TA_AN_IB_O","TA_AN_IB_KP","TA_AN_O_KP","TA_IB_O_KP","AN_IB_O_KP",
+    "TA_AN_IB_O_KP",
+]
+
+
+# The different input parameters for graph directionalization
+directe_graph_types = [
+    "directed_0",
+    "directed_3",
+]
+
+
+# all resulting output filtes (plot files not included)
+# intermediate files are infered by snakemake
+rule all:
+    input:
+        # CER and other infection source rates 
+        expand("data/inf_source_rate/{cluster_type}/{graph_type}/TA_AN_IB_O_KP/stats_{jump}.txt", cluster_type = cluster_types, graph_type = directe_graph_types, jump=jump_distance), 
+        "data/inf_source_rate/all_stats_all_combinations.csv",
+
+
+        # downsampling analysis
+        expand("data/inf_source_rate/{cluster_type}/downsample_stats.txt", cluster_type = cluster_types),     
+
+
+        # supplementary tables
+        "data/supplementary_table_IntegratedInfectionContexts.csv",
+        expand("data/clusters/suplement_table_clusters_{cluster_type}.csv", cluster_type=cluster_types),
+        
+        # cluster stats
+        expand("data/clusters/clusters_stats_{cluster_type}.txt", cluster_type = cluster_types ),
+        expand("data/clusters/cluster_length_stats_{cluster_type}.txt", cluster_type = cluster_types ),
+        
+        # other stats and calculations
+        "data/sanity_check_cases_contactcounts.txt",
+        "data/same_address_component_sizes_stats.txt",
+        "data/symptom_start_stats.txt",
+        "data/stats.txt",
+        
+
+        # visualising the case graph with graphviiz
+        # "plots/graphs/draw_graphs_other.txt",
+        # expand("plots/graphs/draw_graphs_clusters_{cluster_type}.txt", cluster_type = cluster_types ), 
+        
+        
+
+# to clear up rule confusion between for example calculate_clusters and downsampled_calculate_clusters
+wildcard_constraints:
+    cluster_type = "c\w+", 
+    jump = "j\w+", 
+
+
+
+
+
+
+
+#################################################
+#            Filtering the Data                 #
+#################################################
+# first filtering steps and create initial graph
+
+
+rule prefilter_genetic_data:
+    input: 
+        "data/genetic_data/Feb-Dez_2021.fasta.MSA.fa.fullDistanceMatrix.tab",
+        "data/genetic_data/current_samples_noseq.json",
+    output: 
+        "data/genetic_data/distancematrix_prefiltered.tab",
+        "data/genetic_data/samples.json",
+    log:
+        "logs/prefilter_genetic_data_"+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".log"
+    shell: 
+        "python code/assemble_data/prefilter_genetic_data.py {input} {output} |& tee -a {log}"
+
+
+
+rule prefilter_graph:
+    input: 
+        "data/graph/CaseRelationships_Nodes_full_infstarts.csv",
+        "data/graph/CaseRelationships_Edges_full.csv",
+    output: 
+        "data/graph/graph_prefiltered.gml",
+    log:
+        "logs/prefilter_graph_"+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".log"
+    shell: 
+        "python code/assemble_data/prefilter_graph.py {input} {output} |& tee -a {log}"
+
+
+
+rule add_outbreaks_to_graph:
+    input: 
+        "data/graph/graph_prefiltered.gml",
+        "data/graph/FallIDs-Ausbruch_IDs_2021.csv",
+    output: 
+        "data/graph/graph_prefiltered_outbreaks.gml",
+    log:
+        "logs/add_outbreaks_to_graph_"+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".log"
+    shell: 
+        "python code/assemble_data/add_outbreaks_to_graph.py {input} {output} |& tee -a {log}"
+
+
+
+rule find_case_to_sample_mapping:
+    input: 
+        "data/graph/graph_prefiltered_outbreaks.gml",
+        "data/genetic_data/distancematrix_prefiltered.tab",
+        "data/genetic_data/samples.json",
+    output: 
+        "data/graph/case_matching.csv" ,
+        "data/graph/graph_final_undirected.gml" ,
+    log:
+        "logs/find_case_to_sample_mapping_"+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".log"
+    shell: 
+        "python code/assemble_data/find_case_to_sample_mapping.py {input} {output} |& tee -a {log}"
+
+
+
+
+
+#################################################
+#            Calculate Clusters                 #
+#################################################
+# calculate genetic clusters and report their stats
+
+
+rule calculate_clusters:
+    input: 
+        "data/genetic_data/distancematrix_prefiltered.tab",
+        "data/graph/graph_final_undirected.gml" ,
+    output: 
+        "data/clusters/{cluster_type}.json",
+        "data/clusters/{cluster_type}_dates.json",
+    log:
+        "logs/calculate_clusters_{cluster_type}_"+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".log",
+    shell: 
+        "python code/cluster/clusters.py {input} {output}  |& tee -a {log}"
+
+
+
+rule clusters_stats:
+    input: 
+        "data/clusters/{cluster_type}.json",
+        "data/clusters/{cluster_type}_dates.json",
+        "data/graph/graph_final_undirected.gml" ,
+    output: 
+        "data/clusters/clusters_stats_{cluster_type}.txt",
+    log:
+        "logs/clusters_stats_{cluster_type}_"+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".log",
+    shell: 
+        "python code/cluster/clusters_stats.py {input} {wildcards.cluster_type} {output}  |& tee -a {log}"
+
+
+
+rule clusters_length_stats:
+    input: 
+        "data/clusters/{cluster_type}.json",
+        "data/clusters/{cluster_type}_dates.json",
+        "data/graph/graph_final_undirected.gml" ,
+        "data/genetic_data/distancematrix_prefiltered.tab",
+    output: 
+        "data/clusters/cluster_length_stats_{cluster_type}.txt",
+    log:
+        "logs/cluster_length_stats_{cluster_type}_"+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".log",
+    shell: 
+        "python code/cluster/cluster_length_stats.py {input} {wildcards.cluster_type} {output}  |& tee -a {log}"
+
+
+
+rule supplement_table_cluster:
+    input: 
+        "data/clusters/{cluster_type}.json",
+        "data/clusters/{cluster_type}_dates.json", 
+        expand("data/inf_source_rate/{{cluster_type}}/TA_AN_IB_O_KP/Infsource_rate_directed_0_and_{jump}.json", jump=jump_distance),
+        expand("data/inf_source_rate/{{cluster_type}}/TA_AN_IB_O_KP/Infsource_rate_directed_3_and_{jump}.json", jump=jump_distance),
+        # expand("data/cl_ex_rate/{{cluster_type}}/directed_3/TA_AN_IB_O_KP/cluster_explanation_rate_{jump}.json", jump=jump_distance),
+        "data/graph/graph_final_directed_3.gml" ,
+    output: 
+        "data/clusters/suplement_table_clusters_{cluster_type}.csv",
+    log:
+        "logs/suplement_table_clusters_{cluster_type}_"+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".log",
+    shell: 
+        "python code/cluster/cluster_supplement.py {input} {wildcards.cluster_type} {output}  |& tee -a {log}"
+
+
+
+
+#################################################
+#          Calculate directed graphs            #
+#################################################
+# calculate the directionalities of the contact tracing data
+
+
+rule create_directed_graph:
+    input: 
+        "data/graph/graph_final_undirected.gml" ,  
+        "data/graph/CaseRelationships_Edges_full.csv",
+        "data/genetic_data/distancematrix_prefiltered.tab",
+    output: 
+        "data/graph/graph_final_directed_{type}.gml",
+    log:
+        "logs/create_directed_graph_directed_{type}_"+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".log",
+    shell: 
+        "python code/assemble_data/directed_graph.py {input}  {output}  |& tee -a {log}"
+
+
+
+
+
+
+#################################################
+#          inf source rate and plots            #
+#################################################
+# calculate the different infection source rates (including CER)
+# and ŕeport their stats
+
+
+rule infection_source_rate:
+    input: 
+        "data/genetic_data/distancematrix_prefiltered.tab",
+        "data/graph/graph_final_{graph_type}.gml" ,  # only directed graphs
+        "data/clusters/{cluster_type}.json", 
+    output: 
+        "data/inf_source_rate/{cluster_type}/{edge_type}/Infsource_rate_{graph_type}_and_{jump}.json", 
+        "data/inf_source_rate/{cluster_type}/{edge_type}/Infectionsource_graph_{graph_type}_{jump}.gml", 
+        "data/inf_source_rate/{cluster_type}/{edge_type}/Infectionsource_graph_addgeneticdata_{graph_type}_{jump}.gml", 
+    log:
+        "logs/inf_source_rate/{cluster_type}/{graph_type}_{jump}_{edge_type}_"+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".log",
+    shell: 
+        "python code/infection_source_rates/infection_source_rate.py {input} {wildcards.cluster_type} {wildcards.graph_type} {wildcards.jump} {wildcards.edge_type} {output}  |& tee -a {log}"
+
+
+
+rule infection_source_rate_stats:
+    input: 
+        "data/inf_source_rate/{cluster_type}/TA_AN_IB_O_KP/Infsource_rate_{graph_type}_and_{jump}.json", 
+        "data/inf_source_rate/{cluster_type}/TA_AN_IB_O_KP/Infectionsource_graph_{graph_type}_{jump}.gml", 
+        "data/inf_source_rate/{cluster_type}/TA_AN_IB_O_KP/Infectionsource_graph_addgeneticdata_{graph_type}_{jump}.gml", 
+        "data/clusters/{cluster_type}.json",
+        "data/clusters/{cluster_type}_dates.json",
+    output: 
+        "data/inf_source_rate/{cluster_type}/{graph_type}/TA_AN_IB_O_KP/stats_{jump}.txt",
+    log:
+        "logs/inf_source_rate/{cluster_type}/{graph_type}_TA_AN_IB_O_KP_{jump}_stats_"+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".log",
+    shell: 
+        "python code/infection_source_rates/infection_source_rate_stats.py {input} {wildcards.cluster_type} {wildcards.jump} {wildcards.graph_type}  {output}  |& tee -a {log}"
+
+
+
+rule infection_source_rate_stats_allcombs:
+    input: 
+        expand("data/inf_source_rate/{{cluster_type}}/{edge_type}/Infsource_rate_{{graph_type}}_and_{{jump}}.json", edge_type=edge_types),
+    output: 
+        "data/inf_source_rate/{cluster_type}/stats_all_combinations_{graph_type}_and_{jump}.csv",
+    log:
+        "logs/inf_source_rate/{cluster_type}/{graph_type}_stats_all_combinations_{jump}_"+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".log",
+    shell: 
+        "python code/infection_source_rates/infection_source_rate_stats_allcombs.py {input} {wildcards.jump} {wildcards.graph_type} {wildcards.cluster_type} {output}  |& tee -a {log}"
+
+
+
+
+rule infection_source_rate_stats_allcombs_all:
+    input: 
+        expand("data/inf_source_rate/{cluster_type}/stats_all_combinations_{graph_type}_and_{jump}.csv", graph_type=directe_graph_types, cluster_type=cluster_types,  jump=jump_distance),
+    output: 
+        "data/inf_source_rate/all_stats_all_combinations.csv",
+    log:
+        "logs/inf_source_rate/all_stats_all_combinations_"+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".log",
+    shell: 
+        "python code/infection_source_rates/infection_source_rate_stats_allcombs_all.py {input} {output}  |& tee -a {log}"
+
+
+
+rule infection_source_rate_ignoring_sequences:
+    input: 
+        "data/graph/graph_final_directed_0.gml" ,  
+    output: 
+        "data/inf_source_rate/connected_components_0/Infsource_rate_directed_0_and_jump_0.json",  
+        "data/inf_source_rate/connected_components_0/Infectionsource_graph_ignoring_sequences_directed_0_jump_0.gml", 
+    log:
+        "logs/inf_source_rate/connected_components_0/ignoring_sequences_directed_0_jump_0_"+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".log",
+    shell: 
+        "python code/infection_source_rates/infection_source_rate_ignoring_sequences.py {input} {output}  |& tee -a {log}"
+
+
+
+
+#################################################
+#         Sequenced cases downsampling          # 
+#################################################
+# Downsample the amount of genetic sequences to show the impact
+# of the sequences and report the stats
+
+rule downsampled_calculate_clusters:
+    input: 
+        "data/genetic_data/distancematrix_prefiltered.tab",
+        "data/genetic_data/Subsampling_Dataset.csv",
+        "data/graph/graph_final_undirected.gml" ,
+    output: 
+        "data/clusters/all_downsampled_{cluster_type}.json",
+    log:
+        "logs/Downsampled_calculate_clusters_{cluster_type}_"+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".log",
+    shell: 
+        "python code/downsampling_analysis/downsampled_clusters.py {input} {wildcards.cluster_type} {output}  |& tee -a {log}"
+
+
+
+rule downsampled_CER_graphs:
+    input: 
+        "data/genetic_data/distancematrix_prefiltered.tab",
+        "data/genetic_data/Subsampling_Dataset.csv",
+        "data/graph/graph_final_directed_0.gml" ,  
+        "data/clusters/all_downsampled_{cluster_type}.json", 
+    output: 
+        "data/inf_source_rate/Downsampled_infsource_rates_directed_0_{cluster_type}.json", 
+    log:
+        "logs/CER_downsampled_graphs_{cluster_type}_"+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".log",
+    shell: 
+        "python code/downsampling_analysis/downsampled_CER_graphs.py {input} {wildcards.cluster_type} {output}  |& tee -a {log}"
+
+    
+rule downsampled_stats_plots:
+    input: 
+        "data/clusters/all_downsampled_{cluster_type}.json",
+        "data/inf_source_rate/Downsampled_infsource_rates_directed_0_{cluster_type}.json", 
+    output: 
+        "data/inf_source_rate/{cluster_type}/downsample_stats.txt", 
+    log:
+        "logs/stats_downsampled_graphs_{cluster_type}_"+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".log",
+    shell: 
+        "python code/downsampling_analysis/downsampled_stats.py {input} {wildcards.cluster_type} {output}  |& tee -a {log}"
+
+    
+
+#################################################
+#              Other statistics                 #
+#################################################
+# other statistics of the graph and input data
+
+
+rule supplementary_table_IntegratedInfectionContexts:
+    input: 
+        "data/inf_source_rate/connected_components_0/TA_AN_IB_O_KP/Infectionsource_graph_directed_0_jump_0.gml", 
+        "data/inf_source_rate/connected_components_0/Infectionsource_graph_ignoring_sequences_directed_0_jump_0.gml",
+        "data/graph/Edge_contexts.csv",
+        "data/graph/Outbreak_to_context.csv",
+    output: 
+        "data/supplementary_table_IntegratedInfectionContexts.csv",
+    log:
+        "logs/supplementary_table_IntegratedInfectionContexts_"+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".log",
+    shell: 
+        "python code/other_stats/supplementary_table_IntegratedInfectionContexts.py {input}  {output}  |& tee -a {log}"
+
+
+
+rule sanity_check_cases_contactcounts:
+    input: 
+        "data/graph/graph_final_undirected.gml" ,  
+        "data/graph/CaseRelationships_Nodes_full_infstarts.csv",
+        "data/graph/CaseRelationships_Edges_full.csv",
+    output: 
+        "data/sanity_check_cases_contactcounts.txt",
+    log:
+        "logs/sanity_check_cases_contactcounts_"+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".log",
+    shell: 
+        "python code/other_stats/sanity_check_cases_contactcounts.py {input}  {output}  |& tee -a {log}"
+
+
+
+rule same_address_component_sizes_stats:
+    input: 
+        "data/graph/graph_final_undirected.gml" ,
+    output: 
+        "data/same_address_component_sizes_stats.txt",
+    log:
+        "logs/same_address_component_sizes_stats_"+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".log",
+    shell: 
+        "python code/other_stats/same_address_component_sizes_stats.py {input}  {output}  |& tee -a {log}"
+
+    
+
+rule symptom_start_stats:
+    input: 
+        "data/genetic_data/distancematrix_prefiltered.tab",
+        "data/graph/graph_final_undirected.gml" ,
+        "data/graph/CaseRelationships_Nodes_full_infstarts.csv",
+        "data/graph/CaseRelationships_Edges_full.csv",
+    output: 
+        "data/symptom_start_stats.txt",
+    log:
+        "logs/symptom_start_stats_"+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".log",
+    shell: 
+        "python code/other_stats/symptom_start_stats.py {input}  {output}  |& tee -a {log}"
+
+
+
+rule other_stats:
+    input: 
+        "data/genetic_data/distancematrix_prefiltered.tab",
+        "data/graph/graph_final_undirected.gml" ,
+        "data/genetic_data/samples.json",
+    output: 
+        "data/stats.txt",
+    log:
+        "logs/other_stats_"+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".log",
+    shell: 
+        "python code/other_stats/other_stats.py {input}  {output}  |& tee -a {log}"
+
+    
+
+
+#################################################
+#                plot graphs                    #
+#################################################
+# draw graphs using graphviz
+
+rule draw_graphs_clusters:
+    input: 
+        "data/clusters/{cluster_type}.json",
+        "data/clusters/{cluster_type}_dates.json",
+        "data/graph/graph_final_directed_3.gml" ,
+        "data/genetic_data/distancematrix_prefiltered.tab",
+    output: 
+        "plots/graphs/draw_graphs_clusters_{cluster_type}.txt",
+    log:
+        "logs/draw_graphs_clusters_{cluster_type}_"+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".log",
+    shell: 
+        "python code/draw_graph/draw_graphs_clusters.py {input} {wildcards.cluster_type} {output}  |& tee -a {log}"
+
+
+
+rule draw_graphs_other:
+    input: 
+        "data/graph/graph_final_directed_3.gml" ,
+        "data/genetic_data/distancematrix_prefiltered.tab",
+        "data/graph/FallIDs-Ausbruch_IDs_2021.csv",
+    output: 
+        "plots/graphs/draw_graphs_other.txt",
+    log:
+        "logs/draw_graphs_other_"+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".log",
+    shell: 
+        "python code/draw_graph/draw_graphs_other.py {input} {output}  |& tee -a {log}"
+
+
+
+
+
+

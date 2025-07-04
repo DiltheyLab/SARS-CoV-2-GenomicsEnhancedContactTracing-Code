@@ -1,0 +1,16 @@
+
+# ignore automated directories
+.snakemake/
+code/__pycache__/
+
+code/assemble_data/__pycache__/
+code/downsampling_analysis/__pycache__/
+code/infection_source_rates/__pycache__/
+code/cluster/__pycache__/
+code/draw_graph/__pycache__/
+code/other_stat/__pycache__/
+
+# ignore output directories from the snakemake workflow
+data/
+plots/
+logs/
