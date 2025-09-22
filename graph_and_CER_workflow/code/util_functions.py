@@ -167,7 +167,7 @@ def save_clusters(path: str, clusters : list) -> None:
     """
     
     with open(path, "w") as outfile:        
-        json.dump(clusters, outfile)
+        json.dump(clusters, outfile, indent=4)
         
 
 def load_clusters(path: str) -> dict:

@@ -122,6 +122,7 @@ rule all:
         expand("data/clusters/cluster_length_stats_{cluster_type}.txt", cluster_type = cluster_types ),
         
         # other stats and calculations
+        expand("data/inf_source_rate/changes/Saved_values_{cluster_type}.json", cluster_type = cluster_types),
         "data/sanity_check_cases_contactcounts.txt",
         "data/same_address_component_sizes_stats.txt",
         "data/symptom_start_stats.txt",
@@ -427,6 +428,24 @@ rule downsampled_stats_plots:
 #              Other statistics                 #
 #################################################
 # other statistics of the graph and input data
+
+
+
+rule editor_changes_genetic_connections:
+    input: 
+        "data/genetic_data/distancematrix_prefiltered.tab",
+        "data/graph/graph_final_directed_0.gml" , 
+        "data/clusters/{cluster_type}.json", 
+        "data/graph/FallIDs-Ausbruch_IDs_2021.csv",
+        "data/graph/Outbreak_to_context.csv",
+    output: 
+        "data/inf_source_rate/changes/Saved_values_{cluster_type}.json", 
+    log:
+        "logs/inf_source_rate/editor_changes_genetic_connections_{cluster_type}_"+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".log",
+    shell: 
+        "python code/other_stats/editor_changes_genetic_connections.py {input} {wildcards.cluster_type} {output}  |& tee -a {log}"
+
+
 
 
 rule supplementary_table_IntegratedInfectionContexts:
