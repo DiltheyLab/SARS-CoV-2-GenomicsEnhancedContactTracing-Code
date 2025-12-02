@@ -100,7 +100,7 @@ def check_symptom_starts_simple(in_fname: str, graph: object) -> None:
     
     ################################################################### TODO paper
     plt.clf()
-    sns.set_theme(font_scale=2) 
+    sns.set_theme(style="whitegrid",font_scale=2) 
     fig, ax = plt.subplots(figsize=(9, 7))
        
     
@@ -129,7 +129,10 @@ def check_symptom_starts_simple(in_fname: str, graph: object) -> None:
     plt.title(f"mean: {round(mean_diff, 2)}, std: {round(std_diff, 2)}, cases: {len(differences_2021_filtered)} of {len(graph.nodes)}")
 
 
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     
     # labels
     plt.xlabel("Date difference in days \n(registration date - symptom onset date) ")
@@ -284,7 +287,7 @@ def check_pairwise_datediffs(graph: object, dm: dict, edges_path: str) -> None :
     
     ################################################################### TODO paper
     plt.clf()
-    sns.set_theme(font_scale=2) 
+    sns.set_theme(style="whitegrid",font_scale=2) 
     fig, ax = plt.subplots(figsize=(9, 6))
     
     diffs_ib = edgetype_to_distances_sym["SurvnetAngestecktBei"]
@@ -306,7 +309,10 @@ def check_pairwise_datediffs(graph: object, dm: dict, edges_path: str) -> None :
     mean_diff = np.mean(diffs_ib)
     std_diff = np.std(diffs_ib)
 
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     
     plt.tight_layout()
 
@@ -366,7 +372,7 @@ def check_pairwise_datediffs(graph: object, dm: dict, edges_path: str) -> None :
     
     
     plt.clf()
-    sns.set_theme(font_scale=2.0) 
+    sns.set_theme(style="whitegrid",font_scale=2.0) 
     fig, ax = plt.subplots(figsize=(9, 6))
     
 
@@ -379,7 +385,10 @@ def check_pairwise_datediffs(graph: object, dm: dict, edges_path: str) -> None :
     plt.xlim((-4,4))
     plt.ylim((0,1))
     plt.tight_layout()
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     
     plt.savefig(f"plots/symptom_start/symptomonsets_infectedby_probability.svg")
     

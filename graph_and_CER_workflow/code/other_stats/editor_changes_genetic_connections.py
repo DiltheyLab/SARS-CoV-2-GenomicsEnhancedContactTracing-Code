@@ -14,6 +14,8 @@ from collections import Counter
 from collections import defaultdict
 from pathlib import Path
 import pandas as pd
+import os
+import csv
 
 
 parent_dir = Path(__file__).resolve().parent.parent
@@ -117,7 +119,7 @@ def look_at_genetically_not_supported_edges(dm: dict, graph: object) -> dict :
 
         # plot barplot
         # plt.clf()
-        sns.set_theme(font_scale=1.8) 
+        sns.set_theme(style="whitegrid",font_scale=1.8) 
         fig, ax = plt.subplots(figsize=(11.5, 7))
     
         # plot barplot
@@ -274,7 +276,7 @@ def compare_infectionsource_counts(dm: dict, graph: object) -> dict:
         
         # start plotting it
         # plt.clf()
-        sns.set_theme(font_scale=1.8) 
+        sns.set_theme(style="whitegrid",font_scale=1.8) 
         fig, ax = plt.subplots(figsize=(11.5, 7))
         plt.tight_layout()
         
@@ -294,7 +296,11 @@ def compare_infectionsource_counts(dm: dict, graph: object) -> dict:
         plt.tight_layout(pad=2)   
         
         plt.ylabel("Count")
-        ax.set_facecolor('#EAEAEA')
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.spines['left'].set_visible(False)
+        ax.spines['bottom'].set_visible(False)
+        
         
         # plt.ylim(0,1000 if max(vals) < 1000 else 1200)
         
@@ -392,6 +398,16 @@ def check_timemapping_outbreaks(graph: object, clusters: list, outbreaks: dict, 
         dict: _description_
     """
     
+    # seq_isolates = [case for case in graph.nodes()
+    #   if graph.nodes[case]["sample_id"] != "" 
+    #   and any([
+    #        1 for u,v,data in list(graph.in_edges(case, data=True)) + list(graph.out_edges(case, data=True))
+    #         if data["type"] == ""
+    #       ])]
+    
+    # print(len(seq_isolates))
+    # exit()
+    
     # graph = graph.copy()
     # #filter graph by edgetypes     
     # filter_edgetypes(graph, "TA_AN_IB_O_KP")
@@ -401,13 +417,41 @@ def check_timemapping_outbreaks(graph: object, clusters: list, outbreaks: dict, 
     
     distance_threshold = int(CLUSTER_TYPE[-1])
     
+    unfiltered_outbreaks = outbreaks
+    
+    
     # Filter the outbreaks to only contain cases that are kept in the graph
     outbreaks = {
         outbreak_name: [case for case in outbreak_cases
                             if case in graph.nodes()] 
             for outbreak_name, outbreak_cases in outbreaks.items()
                 if any(case in graph.nodes() for case in outbreak_cases) # do not keep empty outbreaks (somewhat inefficient)
+                    and outbreak_name != "CVD-DÜS-COCTAILBAR/ALTSTADT-2021-0086" # skip unusable outbreak
+                    and outbreak_name in outbreak_to_context
     }
+
+
+    
+
+    
+                    
+                
+              # collect all dates of outbreak cases
+    outbreak_dates = {
+        outbreak_name: [graph.nodes[case]["date"] for case in outbreaks[outbreak_name]]
+            for outbreak_name in outbreaks
+    }
+    
+    # filter the dates into start and end date
+    outbreak_start_end_dates = {
+        outbreak_name: {
+            "start": min(dates, key=lambda d: datetime.strptime(d, "%d.%m.%Y")),
+            "end": max(dates, key=lambda d: datetime.strptime(d, "%d.%m.%Y"))
+        }
+        for outbreak_name, dates in outbreak_dates.items()
+    }          
+
+
     
     #############################################################
     #### actually not doing cluster to outbreak but rather only genetically connected to cluster
@@ -435,6 +479,10 @@ def check_timemapping_outbreaks(graph: object, clusters: list, outbreaks: dict, 
     
     # find all genetically connected cases for each outbreak
     outbreak_to_cases_gen = defaultdict(list)
+    outbreak_to_cases_gen_cutoff = defaultdict(list)
+    
+    duplicate_protection_contextwide = defaultdict(list)
+    
     for outbreak_name in outbreaks:        
         for outbreak_case in outbreaks[outbreak_name]:
             
@@ -442,55 +490,228 @@ def check_timemapping_outbreaks(graph: object, clusters: list, outbreaks: dict, 
                 continue
             
             outbreak_index = graph.nodes[outbreak_case]["dm_index"]
+            outbreak_date = datetime.strptime(graph.nodes[outbreak_case]["date"], "%d.%m.%Y")
+            
+            
             
             for seq_case in sequenced_cases:
+                # dont save outbreak cases
                 if seq_case in outbreaks[outbreak_name]:
                     continue
+                
+                # duplicate protection
+                if seq_case in duplicate_protection_contextwide[outbreak_to_context[outbreak_name]]:
+                    continue
+                
+                
                 
                 index2 = graph.nodes[seq_case]["dm_index"]
                 if dm["table"][outbreak_index][index2] <= distance_threshold:
                     outbreak_to_cases_gen[outbreak_name].append(seq_case)
-        
-                
-                
-
-
-    # collect all dates of outbreak cases
-    outbreak_dates = {
-        outbreak_name: [graph.nodes[case]["date"] for case in outbreaks[outbreak_name]]
-            for outbreak_name in outbreaks
-    }
+                    
+                    duplicate_protection_contextwide[outbreak_to_context[outbreak_name]].append(seq_case)
+                    
+                    case_date = datetime.strptime(graph.nodes[seq_case]["date"], "%d.%m.%Y")
+                    
+                    diff_start_date = (case_date - datetime.strptime( outbreak_start_end_dates[outbreak_name]["start"], "%d.%m.%Y")).days
+                    diff_end_date = (case_date - datetime.strptime( outbreak_start_end_dates[outbreak_name]["end"], "%d.%m.%Y")).days
+                    
+                    # if (-14 <= diff_start_date) and (diff_end_date <= 14):
+                    if abs((outbreak_date - case_date).days) <= 14:
+                        outbreak_to_cases_gen_cutoff[outbreak_name].append(seq_case)
+                        
+                      
+                        
     
-    # filter the dates into start and end date
-    outbreak_start_end_dates = {
-        outbreak_name: {
-            "start": min(dates, key=lambda d: datetime.strptime(d, "%d.%m.%Y")),
-            "end": max(dates, key=lambda d: datetime.strptime(d, "%d.%m.%Y"))
-        }
-        for outbreak_name, dates in outbreak_dates.items()
-    }
-    
-
-    # calculate the time diffs to get a feeling    
-    # outbreak_timespans = Counter([(datetime.strptime(val["end"], "%d.%m.%Y") - datetime.strptime(val["start"], "%d.%m.%Y")).days
-    #         for outbreak_name, val in outbreak_start_end_dates.items()])
-    # print( sorted(list(dict(outbreak_timespans).items()), key=lambda x:x[0]))
 
 
     outbreaks_starttime_diffs = {
         outbreak_name: [
-            
             # case date - start outbreak date  -> days after the start date
+            #tupel of timediff and normal case name
             (datetime.strptime(graph.nodes[conn_case]['date'], "%d.%m.%Y") - datetime.strptime(outbreak_start_end_dates[outbreak_name]["start"], "%d.%m.%Y")).days
-            
+            # ((datetime.strptime(graph.nodes[conn_case]['date'], "%d.%m.%Y") - datetime.strptime(outbreak_start_end_dates[outbreak_name]["start"], "%d.%m.%Y")).days, conn_case)
                 for conn_case in outbreak_to_cases_gen[outbreak_name]
-            
-            
         ] for outbreak_name in outbreak_dates
     }
-
-    # print(outbreaks_starttime_diffs)
+    outbreaks_starttime_diffs_cutoff = {
+        outbreak_name: [
+            # case date - start outbreak date  -> days after the start date
+            #tupel of timediff and normal case name
+            (datetime.strptime(graph.nodes[conn_case]['date'], "%d.%m.%Y") - datetime.strptime(outbreak_start_end_dates[outbreak_name]["start"], "%d.%m.%Y")).days
+            # ((datetime.strptime(graph.nodes[conn_case]['date'], "%d.%m.%Y") - datetime.strptime(outbreak_start_end_dates[outbreak_name]["start"], "%d.%m.%Y")).days, conn_case)
+                for conn_case in outbreak_to_cases_gen_cutoff[outbreak_name]
+        ] for outbreak_name in outbreak_dates
+    }
     
+    
+    
+    
+    # # calculate the time diffs to get a feeling    
+    # contex_of_interest_debug = "Nightlife" # "Work"
+    # outbreak_timespans = Counter([(datetime.strptime(val["end"], "%d.%m.%Y") - datetime.strptime(val["start"], "%d.%m.%Y")).days
+    #         for outbreak_name, val in outbreak_start_end_dates.items() 
+    #             if outbreak_name in outbreak_to_context and outbreak_to_context[outbreak_name] == contex_of_interest_debug ])
+    # # print( [sorted(list(dict(outbreak_timespans).items()), key=lambda x:x[0])])
+    
+    # print([((datetime.strptime(val["end"], "%d.%m.%Y") - datetime.strptime(val["start"], "%d.%m.%Y")).days, outbreak_name, 
+    #         outbreak_start_end_dates[outbreak_name]["start"], outbreak_start_end_dates[outbreak_name]["end"])
+    #         for outbreak_name, val in outbreak_start_end_dates.items() 
+    #             if outbreak_name in outbreak_to_context and outbreak_to_context[outbreak_name] == contex_of_interest_debug ])
+    
+    
+    # print([(outbreak_name, vals) for  outbreak_name, vals in outbreaks_starttime_diffs.items()
+    #         if outbreak_name in outbreak_to_context and outbreak_to_context[outbreak_name] == contex_of_interest_debug ])
+    # print([(outbreak_name, vals) for  outbreak_name, vals in outbreaks_starttime_diffs_cutoff.items()
+    #         if outbreak_name in outbreak_to_context and outbreak_to_context[outbreak_name] == contex_of_interest_debug ])
+
+
+
+    """
+    ##Nightlife
+    [(3, 'CVD-DÜS-BAR/ALTSTADT-2021-0090'), 
+    (1, 'CVD-DÜS-CAFFE/ALTSTADT2021-0089'), 
+    (0, 'CVD-DÜS-BRAUEREI-2021-0092'), 
+    (2, 'CVD-DÜS-FEIER-2021-0114'), 
+    (2, 'CVD-DÜS-BAR-2021-0132'), 
+    (4, 'CVD-DÜS-BAR-2021-0142'), 
+    (1, 'CVD-DÜS-VERANSTALTUNG-2021-0188'), 
+    (7, 'CVD-DÜS-VERANSTALTUNG-2021-0193'), 
+    (1, 'Abschiedsparty'), 
+    (2, 'CVD-DÜS-ClubTor3-2021-0130')]
+    
+    [('CVD-DÜS-BAR/ALTSTADT-2021-0090', [1, -2, 1, 2, 5, 5, 7, 8, 9, 9, 10, 14, 38, 44, 47, 47, 49, 55]), 
+    ('CVD-DÜS-CAFFE/ALTSTADT2021-0089', [2, 4, 5, 10, 22]), 
+    ('CVD-DÜS-BRAUEREI-2021-0092', [0, 1, 2, 3, 3, 3, 7, 7, 8, 8, 10, 10, 13, 15, 15, 16, 24, 25, 27, 28, 28, 32, 35, 39, 43, 45, 45, 46, 51]), 
+    ('CVD-DÜS-FEIER-2021-0114', [-44, -5, 2]), 
+    ('CVD-DÜS-BAR-2021-0132', [-2, -2, -2, -2, -2, -1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 4, 5, 5, 6, 6, 6, 7, 7, 9, 9, 9, 9, 9, 10, 12, 12, 13, 13, 13, 14, 14, 15, 15, 15, 16, 16, 16, 16, 18, 18, 20, 20, 22, 24, 40, 76]), 
+    ('CVD-DÜS-BAR-2021-0142', [1, 2, 6, 9, 10, 15, 15, 42, 45]), 
+    ('CVD-DÜS-VERANSTALTUNG-2021-0188', [-1, -1, 2, 4, 15]), 
+    ('CVD-DÜS-VERANSTALTUNG-2021-0193', []), 
+    ('Abschiedsparty', [2, 5]), 
+    ('CVD-DÜS-ClubTor3-2021-0130', [-11, 3, 4, 5, 5, 7, 9, 9, 10, 11, 13, 14, 14, 23, 24])]
+    
+    [('CVD-DÜS-BAR/ALTSTADT-2021-0090', [1, -2, 1, 2, 5, 5, 7, 8, 9, 9, 10, 14]), 
+    ('CVD-DÜS-CAFFE/ALTSTADT2021-0089', [2, 4, 5, 10]), 
+    ('CVD-DÜS-BRAUEREI-2021-0092', [0, 1, 2, 3, 3, 3, 7, 7, 8, 8, 10, 10, 13]), 
+    ('CVD-DÜS-FEIER-2021-0114', [-5, 2]), 
+    ('CVD-DÜS-BAR-2021-0132', [-2, -2, -2, -2, -2, -1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 4, 5, 5, 6, 6, 6, 7, 7, 9, 9, 9, 9, 9, 10, 12, 12, 13, 13, 13, 14, 14, 15, 15, 15, 16, 16, 16, 16]), 
+    ('CVD-DÜS-BAR-2021-0142', [1, 2, 6, 9, 10, 15, 15]), 
+    ('CVD-DÜS-VERANSTALTUNG-2021-0188', [-1, -1, 2, 4, 15]), 
+    ('CVD-DÜS-VERANSTALTUNG-2021-0193', []), 
+    ('Abschiedsparty', [2, 5]), 
+    ('CVD-DÜS-ClubTor3-2021-0130', [-11, 3, 4, 5, 5, 7, 9, 9, 10, 11, 13, 14, 14])]
+
+
+
+    #### Work genauer anschauen:
+
+    [(7, 'CVD-DUS-ARBEIT-2021-0036'), (3, 'CVD-DÜS-ARBEIT-2021-0042'), (1, 'CVD-DÜS-ARBEIT-2021-0049'), 
+    (6, 'CVD-DÜS-ARBEIT-2021-0050'), (1, 'CVD-Dus-Arbeit-2021-0064'), (3, 'CVD-DÜS-ARBEIT-2021-0077'), 
+    (1, 'CVD-DÜS-ARBEIT-2021-0097'), (4, 'CVD-DÜS-ARBEIT-2021-0118'), (1, 'CVD-DUS-Arbeit-2021-0129'), 
+    (0, 'CVD-DÜS-ARBEIT-2021-0158'), (2, 'CVD-DUS-Arbeit-2021-0209'), (0, 'CVD-DÜS-ARBEIT-2021-35950'), 
+    (4, 'CVD-DÜS-ARBEIT-2021-0218')]
+    
+    
+    # Ohne date cutoff
+    [('CVD-DUS-ARBEIT-2021-0036', [55, 55, 55, 56, 57, 57, 62, 62, 63, 64, 66, 67, 68, 69, 69, 71, 71, -6, 0, 0, 0, 0, 8, 12, 12, 14, 49, 49, 53, 54, 54]), 
+    ('CVD-DÜS-ARBEIT-2021-0042', [43, 43, 43, 44, 45, 45, 45, 49, 50, 50, 50, 51, 52, 54, 55, 56, 57, 57, 59, 59, 70, -26, -18, -18, -17, -12, -12, -12, -12, -12, -12, -7, -7, -7, -6, -4, -4, 1, 2, 7, 8, 15, 19, 21, 21, 21, 21, 21, 22, 27, 35, 37, 37, 41, 42, 42, 43, 68]), 
+    ('CVD-DÜS-ARBEIT-2021-0049', [-6, -2]), 
+    ('CVD-DÜS-ARBEIT-2021-0050', []), 
+    ('CVD-Dus-Arbeit-2021-0064', []), 
+    ('CVD-DÜS-ARBEIT-2021-0077', []), 
+    ('CVD-DÜS-ARBEIT-2021-0097', []), 
+    ('CVD-DÜS-ARBEIT-2021-0118', []), 
+    ('CVD-DUS-Arbeit-2021-0129', []), 
+    ('CVD-DÜS-ARBEIT-2021-0158', []), 
+    ('CVD-DUS-Arbeit-2021-0209', []), 
+    ('CVD-DÜS-ARBEIT-2021-35950', [-10, 2, 2, 9, 14, 15]), 
+    ('CVD-DÜS-ARBEIT-2021-0218', [])]
+    
+    
+    # mit date cutoff
+    [('CVD-DUS-ARBEIT-2021-0036', [-6, 0, 0, 0, 0, 8, 12, 12, 14]), 
+    ('CVD-DÜS-ARBEIT-2021-0042', [-12, -12, -12, -12, -12, -12, -7, -7, -7, -6, -4, -4, 1, 2, 7, 8, 15]), 
+    ('CVD-DÜS-ARBEIT-2021-0049', [-6, -2]), 
+    ('CVD-DÜS-ARBEIT-2021-0050', []), 
+    ('CVD-Dus-Arbeit-2021-0064', []), 
+    ('CVD-DÜS-ARBEIT-2021-0077', []), 
+    ('CVD-DÜS-ARBEIT-2021-0097', []), 
+    ('CVD-DÜS-ARBEIT-2021-0118', []), 
+    ('CVD-DUS-Arbeit-2021-0129', []), 
+    ('CVD-DÜS-ARBEIT-2021-0158', []), 
+    ('CVD-DUS-Arbeit-2021-0209', []), 
+    ('CVD-DÜS-ARBEIT-2021-35950', [-10, 2, 2, 9, 14]), 
+    ('CVD-DÜS-ARBEIT-2021-0218', [])]
+
+
+
+
+
+
+    # Outbreaks containing at least one sequenced case vs all outbreaks
+
+    {'Recreational context': 44, 'Work': 42, 'Hospital': 103, 'Other': 4, 'Nightlife': 45, 'Kindergarten/daycare': 121, 'School': 227, 'Residential Care Facility': 74, 'Refugee Accommodation': 60, 'Care home': 161})
+    {'Recreational context': 44, 'Work': 42, 'Hospital': 103, 'Other': 4, 'Nightlife': 45, 'Kindergarten/daycare': 121, 'School': 227, 'Residential Care Facility': 74, 'Refugee Accommodation': 60, 'Care home': 161})
+
+    """
+
+
+
+
+
+
+
+    
+    # prepare dicts for other plots
+    context_to_bins = {
+        context: defaultdict(float)
+            for context in set(outbreak_to_context.values())
+    }
+    context_to_bins_cutoff = {
+        context: defaultdict(float)
+            for context in set(outbreak_to_context.values())
+    }
+    
+    context_to_outbreakcases_size = defaultdict(int)
+    for outbreak_name, outbreak_cases in outbreaks.items():
+        if outbreak_name in outbreak_to_context:
+            context_to_outbreakcases_size[outbreak_to_context[outbreak_name]] += len(outbreak_cases)
+            
+    context_to_outbreakcases_size_noseq_req = defaultdict(int)
+    for outbreak_name, outbreak_cases in unfiltered_outbreaks.items():
+        if outbreak_name in outbreak_to_context:
+            if outbreak_name != "CVD-DÜS-COCTAILBAR/ALTSTADT-2021-0086":
+                context_to_outbreakcases_size_noseq_req[outbreak_to_context[outbreak_name]] += len(outbreak_cases)
+        
+    print(context_to_outbreakcases_size)
+    print(context_to_outbreakcases_size_noseq_req)
+    # defaultdict(<class 'int'>, {'Recreational context': 44, 'Work': 42, 'Hospital': 103, 'Other': 4, 'Nightlife': 45, 'Kindergarten/daycare': 121, 'School': 227, 'Residential Care Facility': 74, 'Refugee Accommodation': 60, 'Care home': 161})
+    # defaultdict(<class 'int'>, {'Recreational context': 44, 'Work': 42, 'Hospital': 103, 'Other': 4, 'Nightlife': 45, 'Kindergarten/daycare': 121, 'School': 227, 'Residential Care Facility': 74, 'Refugee Accommodation': 60, 'Care home': 161})
+
+    for outbreak_name, outbreak_cases in outbreaks.items():
+        outbreak_with_seq = False
+        if outbreak_name == "CVD-DÜS-SCHULE-2021-0080":
+            print("IT WAS HEEEEEEEEEEEEEEEEEEEEEEERE")
+        for case in outbreak_cases:
+            if case in graph.nodes() and graph.nodes[case]["sample_id"] != "":
+                # if outbreak_name == "CVD-DÜS-SCHULE-2021-0080"  :
+                #     print(case, )
+                outbreak_with_seq = True
+        if not outbreak_with_seq:
+            print("outbreak has no seq")
+            print(outbreak_name, outbreak_cases)
+            # exit()
+    
+    
+    
+    # exit(1)
+
+    # collecting during cases for Lutz
+    # outbreak_to_during_cases = defaultdict(list)
+    
+    
+    # do the single plots and also collect data for the combined plot
     for outbreak_name, outbreak_timediffs in outbreaks_starttime_diffs.items():
         
         if len(outbreak_timediffs) == 0:
@@ -500,39 +721,208 @@ def check_timemapping_outbreaks(graph: object, clusters: list, outbreaks: dict, 
         if outbreak_name in outbreak_to_context:
             outbreak_context = outbreak_to_context[outbreak_name]
         
-        # plt.clf()
-        sns.set_theme(font_scale=2) 
-        # sns.set_theme(font_scale=2.2) 
-        fig, ax = plt.subplots(figsize=(19, 10))
-        ax.set_facecolor('#EAEAEA')
-        
-        
-        ax = sns.violinplot(x=outbreak_timediffs, inner="point", split=True,  color="#595959")
-        #density_norm="count",
-        plt.axvline(x=0, color="r")
         end_timediff = (datetime.strptime(outbreak_start_end_dates[outbreak_name]["end"], "%d.%m.%Y") - datetime.strptime(outbreak_start_end_dates[outbreak_name]["start"], "%d.%m.%Y")).days
-        plt.axvline(x=end_timediff, color="r")
+        ################### violin plots
+        # # plt.clf()
+        # sns.set_theme(style="whitegrid",font_scale=2) 
+        # # sns.set_theme(style="whitegrid",font_scale=2.2) 
+        # fig, ax = plt.subplots(figsize=(19, 10))
+        # ax.spines['top'].set_visible(False)
+        # ax.spines['right'].set_visible(False)
+        # ax.spines['left'].set_visible(False)
+        # ax.spines['bottom'].set_visible(False)
+        
+        # TODO this breaks currently, because 
+        # ax = sns.violinplot(x=outbreak_timediffs, inner="point", split=True,  color="#595959")
+        # #density_norm="count",
+        # plt.axvline(x=0, color="r")
+        # plt.axvline(x=end_timediff, color="r")
         
             
-        plt.ylabel("Count/Density")
-        plt.xlabel("Time difference to outbreak start date")
+        # plt.ylabel("Count/Density")
+        # plt.xlabel("Time difference to outbreak start date")
+        
+        # outbreak_name = outbreak_name.replace('/', '-')
+        # title_symbol = "=" if CLUSTER_TYPE[-1] == "0" else "≤"
+        # plt.title(f"Genetic threshold for clustering {title_symbol} {CLUSTER_TYPE[-1]}\n{outbreak_name} - context:{outbreak_context}") 
+        
+        # plt.savefig(f"plots/changes/{CLUSTER_TYPE}/outbreak_timediffs/Timediffs_for_{outbreak_name}.svg")
+        
+        # plt.close()
+        
+        
+        
+        ####################################################################
+        # collext into bins for other plot
+        if outbreak_context == "":
+            continue
+        
+        #TODO duplicates???????
+        
+        add_value = 1 / context_to_outbreakcases_size[outbreak_context]
+        for timediff in outbreak_timediffs:
+        # for timediff, case in outbreak_timediffs:
+            
+            if timediff < 0:
+                context_to_bins[outbreak_context]["before"] += add_value
+            elif timediff <= end_timediff:
+                context_to_bins[outbreak_context]["during"] += add_value
+                # outbreak_to_during_cases[outbreak_name].append(case)
+            else:
+                context_to_bins[outbreak_context]["after"] += add_value
+                
+        if outbreak_name in outbreaks_starttime_diffs_cutoff:
+            for timediff in outbreaks_starttime_diffs_cutoff[outbreak_name]:
+            # for timediff, case in outbreaks_starttime_diffs_cutoff[outbreak_name]:
+                if timediff < 0:
+                    context_to_bins_cutoff[outbreak_context]["before"] += add_value
+                elif timediff <= end_timediff:
+                    context_to_bins_cutoff[outbreak_context]["during"] += add_value
+                    # collect no during cases for Lutz here
+                else:
+                    context_to_bins_cutoff[outbreak_context]["after"] += add_value
+                
+                
+            
+    # outbreak_to_during_cases_no_epi = {
+    #     outbreak_name : [
+    #         case 
+    #             for case in during_cases
+    #                 # only keep the cases that dont have an outbreak case as neighbor
+    #                 if set(outbreaks[outbreak_name]).isdisjoint(graph.neighbors(case))  
+    #     ] for outbreak_name, during_cases in outbreak_to_during_cases.items()
+    # }
+    # # save_clusters(f"data/inf_source_rate/changes/during_outbreak_no_epi_{CLUSTER_TYPE}.json", outbreak_to_during_cases_no_epi)
+    
+    # with open(f"data/inf_source_rate/changes/during_outbreak_no_epi_{CLUSTER_TYPE}.csv", "w") as outfile:
+    #     outfile.write("Outbreak\tCase\n")
+    #     for name, cases in outbreak_to_during_cases_no_epi.items():
+    #         for case in cases:
+    #             outfile.write(f"{name}\t{case}\n")
+                
+
+
+
+    # set the order and make pretty versions    
+    phases = ["before", "during", "after"]
+    contexts = [
+        ['Refugee Accommodation', 'Refugee\nAccommodation'], 
+        ['Residential Care Facility', 'Residential\nCare Facility'], 
+        ['School', 'School'], 
+        ['Hospital', 'Hospital'], 
+        ['Care home', 'Care home'], 
+        # ['Other', 'Other'], 
+        ['Work', 'Work'], 
+        ['Recreational context', 'Recreational\ncontext'], 
+        ['Nightlife', 'Nightlife'], 
+        ['Kindergarten/daycare', 'Kindergarten/\ndaycare'],
+    ]
+
+    contexts = sorted(contexts, key= lambda x: (context_to_bins_cutoff[x[0]]["before"] + context_to_bins_cutoff[x[0]]["during"] + context_to_bins_cutoff[x[0]]["after"]) *context_to_outbreakcases_size[x[0]])[::-1]
+    # contexts = sorted(contexts, key= lambda x:context_to_outbreakcases_size[x[0]])[::-1]
+    # print([ (context,context_to_bins[context]["before"] + context_to_bins[context]["during"] + context_to_bins[context]["after"])
+    #         for context, _ in contexts])
+
+    for data_dict, plotname in [[context_to_bins, "no_cutoff"], [context_to_bins_cutoff, "with_cutoff"]]:
+
+        
+        # Prepare lists for plot
+        vals_contexts, vals_bins, vals_numbers, vals_numbers_abolut = [], [], [], []
+        for context, cont_pretty in contexts:
+            phase_dict = data_dict[context]
+            for p in phases:
+                vals_contexts.append(cont_pretty)
+                vals_bins.append(p)
+                vals_numbers.append(phase_dict.get(p, 0))
+                vals_numbers_abolut.append(phase_dict.get(p, 0) * context_to_outbreakcases_size[context])
+
+
+
+        sns.set_theme(style="whitegrid",font_scale=1.5) 
+        # sns.set_theme(style="whitegrid",font_scale=2.2) 
+        fig, ax = plt.subplots(figsize=(12,6))
+        ax.set_facecolor("#FFFFFF")
+
+        # Define colors for the hues (before, during, after)
+        palette = ["#66C2A5", "#FC8D62", "#8DA0CB"]
+
+        # Plot with seaborn
+        # plt.figure(figsize=(12, 6))
+        sns.barplot(x=vals_contexts, y=vals_numbers, hue=vals_bins, palette=palette)
+        
+        plt.ylim([0,3] if CLUSTER_TYPE[-1] == "1" else [0,1.5])
+        
+        plt.xticks(rotation=45, ha="right")
+        plt.tight_layout()
+        
+        plt.ylabel("Connected cases /\noutbreak cases in context")
+        # plt.xlabel("")
+        
         
         outbreak_name = outbreak_name.replace('/', '-')
         title_symbol = "=" if CLUSTER_TYPE[-1] == "0" else "≤"
-        plt.title(f"Genetic threshold for clustering {title_symbol} {CLUSTER_TYPE[-1]}\n{outbreak_name} - context:{outbreak_context}") 
+        plt.title(f"Genetic threshold for clustering {title_symbol} {CLUSTER_TYPE[-1]}") 
         
-        plt.savefig(f"plots/changes/{CLUSTER_TYPE}/outbreak_timediffs/Timediffs_for_{outbreak_name}.svg")
+        plt.savefig(f"plots/changes/{CLUSTER_TYPE}/Timediffs_accumulated_{plotname}.svg")
         
-            
-    
-    
+        plt.close()
 
-    
-    
-    
-    
-    
-    
+
+
+        #############################
+
+        sns.set_theme(style="whitegrid",font_scale=1.5) 
+        # sns.set_theme(style="whitegrid",font_scale=2.2) 
+        fig, ax = plt.subplots(figsize=(12, 6))
+        # fig, ax = plt.subplots(figsize=(19, 15))
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.spines['left'].set_visible(False)
+        ax.spines['bottom'].set_visible(False)
+
+        # Define colors for the hues (before, during, after)
+        palette = ["#66C2A5", "#FC8D62", "#8DA0CB"]
+
+        # Plot with seaborn
+        # plt.figure(figsize=(12, 6))
+        sns.barplot(x=vals_contexts, y=vals_numbers_abolut, hue=vals_bins, palette=palette, ax=ax)
+        
+        plt.ylim([0,200] if CLUSTER_TYPE[-1] == "1" else [0,80])
+        
+        plt.xticks(rotation=45, ha="right")
+        plt.tight_layout()
+        
+        plt.ylabel("Connected cases")
+        # plt.xlabel("")
+        
+        # Compute sums for each context
+        context_sums = {}
+        for c, v in zip(vals_contexts, vals_numbers_abolut):
+            context_sums[c] = context_sums.get(c, 0) + v
+
+        # For each category (context), place text above the group of bars
+        for i, context in enumerate(sorted(set(vals_contexts), key=lambda c: vals_contexts.index(c))):
+            group_bars = [patch for patch in ax.patches if patch.get_x() <= i + 0.5 and patch.get_x() >= i - 0.5]
+            if not group_bars:
+                continue
+            # Find the max bar height in the group to position text above
+            max_height = max(bar.get_height() for bar in group_bars)
+            ax.text(
+                i,                        # x coordinate (center of group)
+                max_height + 0.05,        # a little above tallest bar
+                f"{context_sums[context]:.2f}",  # formatted sum
+                ha="center", va="bottom", fontsize=12, fontweight="bold"
+            )
+        
+        
+        outbreak_name = outbreak_name.replace('/', '-')
+        title_symbol = "=" if CLUSTER_TYPE[-1] == "0" else "≤"
+        plt.title(f"Genetic threshold for clustering {title_symbol} {CLUSTER_TYPE[-1]}") 
+        
+        plt.savefig(f"plots/changes/{CLUSTER_TYPE}/Timediffs_accumulated_abolut_{plotname}.svg")
+        
+        plt.close()
+
     
     
     
@@ -574,6 +964,7 @@ if __name__ == "__main__":
             parts = line.strip().split("\t")
             outbreak_to_context[parts[0]] = parts[1]
     
+
     
     Path(f"plots/changes/{CLUSTER_TYPE}/outbreak_timediffs").mkdir(parents=True, exist_ok=True)
     
@@ -597,10 +988,21 @@ if __name__ == "__main__":
     
     #4
     # how do they fit on the timescale    
-    output_dict_tmp = check_timemapping_outbreaks(graph, clusters, outbreaks, outbreak_to_context)
-    output_dict.update(output_dict_tmp)
+    # output_dict_tmp = check_timemapping_outbreaks(graph, clusters, outbreaks, outbreak_to_context)
+    # output_dict.update(output_dict_tmp)
     
     
+    # sanity check with random outbreak cass
+    if os.path.exists("data/graph/RandomOutbreakCases.csv"):
+        outbreak_to_case_random = {}
+
+        with open("data/graph/RandomOutbreakCases.csv") as f:
+            reader = csv.DictReader(f, delimiter=';', quotechar='"')
+            for row in reader:
+                outbreak_to_case_random[row["originalOutbreak"]] = row["caseID"]
+
+        output_dict_tmp = check_timemapping_outbreaks(graph, clusters, outbreak_to_case_random, outbreak_to_context)
+        exit()
     
     print("Save results")
     save_clusters(OUTPUT_PATH, output_dict)

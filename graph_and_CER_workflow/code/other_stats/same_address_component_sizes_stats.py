@@ -61,18 +61,24 @@ def plot_same_address_component_sizes(graph: object, edge_type: str) -> None :
     
     
     plt.clf()
-    sns.set_theme(font_scale=2) 
+    # sns.set_theme(style="whitegrid", font_scale=2) 
+    sns.set_theme(style="whitegrid", font_scale=2) 
     fig, ax = plt.subplots(figsize=(11, 6))
     
-    
+    # sns.set_theme(style="whitegrid",style="white") 
+
+    # ax.grid(True) 
+
+    # sns.despine() 
+
     ax = sns.barplot(x=list(range(2, max(lengths)+1 )), y=occurrances, color="#595959", width=.95)
-    
+
     fontsize = 18 if max(lengths) < 13 else 10
     ax.bar_label(ax.containers[0], labels=[str(count) if count!=0 else "" for count in occurrances], fontsize=fontsize)
     plt.tight_layout()
     
-    ax.set_facecolor('#EAEAEA')
-    
+    # ax.set_facecolor('#EAEAEA')
+    # fig.patch.set_facecolor('white')
     
     if max(lengths) > 12:
         
@@ -90,6 +96,14 @@ def plot_same_address_component_sizes(graph: object, edge_type: str) -> None :
     plt.ylabel("Count")
     
     plt.title(f"Total: {len(lengths)}, Mean: {round(np.mean(lengths),2)}")
+    
+        
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
+    # ax.set_xticks([])
+    # ax.set_yticks([])
     
     plt.savefig(f"plots/same_address_components/{edge_type}_component_sizes.svg")
         

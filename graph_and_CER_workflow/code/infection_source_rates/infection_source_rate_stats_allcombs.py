@@ -125,7 +125,7 @@ def plot_combined_stats(comb_to_stats, outpath):
     ######################################### used in paper
             
     plt.clf()
-    sns.set_theme(font_scale=1.8) 
+    sns.set_theme(style="whitegrid",font_scale=1.8) 
     fig, ax = plt.subplots(figsize=(10, 7))
     plt.tight_layout()
     
@@ -164,7 +164,10 @@ def plot_combined_stats(comb_to_stats, outpath):
     plt.ylim(0,0.5)
     
     
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     
     plt.ylabel("cluster explanation rate")
     

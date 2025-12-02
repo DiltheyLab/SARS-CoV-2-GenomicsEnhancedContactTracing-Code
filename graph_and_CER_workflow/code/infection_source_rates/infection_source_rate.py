@@ -109,8 +109,24 @@ def remove_edges_for_infectionchains_greedy(graph: object) -> None:
         
         keep_edges += list(tree_of_component.edges(data=True, keys=True))
         
+        # sanity check
+        keep_edges_test = list(tree_of_component.edges(data=True, keys=True))
+        if len(keep_edges_test) != len(max_component)-1:
+            print("##################################")
+            print(keep_edges_test)
+            print(max_component)
+            print(len(keep_edges_test) , len(max_component)-1)
+            exit(1)
+        
         # save and remove component
         temp_graph.remove_nodes_from(max_component)         
+        
+        if "CVD2021-10107" in max_component:
+            print(max_component)
+            print(keep_edges_test)
+            print(len(keep_edges_test) , len(max_component)-1)
+            print(graph.in_degree("CVD2021-10107"))
+            
         
         
         # to prevent infinite loops when running snakemake. should not happen

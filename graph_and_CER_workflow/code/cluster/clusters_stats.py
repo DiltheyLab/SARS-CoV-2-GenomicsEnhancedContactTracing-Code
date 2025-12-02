@@ -118,7 +118,7 @@ def clustersize_per_month_and_casenumbers(cluster: list, dates: list, name: str,
     ######################################### used in paper
     
     plt.clf()
-    sns.set_theme(font_scale=2.2) 
+    sns.set_theme(style="whitegrid",font_scale=2.2) 
     fig, ax = plt.subplots(figsize=(9, 6))
     
     
@@ -144,7 +144,10 @@ def clustersize_per_month_and_casenumbers(cluster: list, dates: list, name: str,
     h2, l2 = ax2.get_legend_handles_labels()
     ax2.legend(h1+h2, l1+l2, loc=2)
     
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     
     # label stuff
     ax.set_xlabel("Month of 2021")
@@ -200,7 +203,7 @@ def basic_cluster_size_plots(clusters, name) -> None:
     ######################################### used in paper
     
     plt.clf()
-    sns.set_theme(font_scale=2.2) 
+    sns.set_theme(style="whitegrid",font_scale=2.2) 
     fig, ax = plt.subplots(figsize=(9, 6))
     
     
@@ -222,7 +225,10 @@ def basic_cluster_size_plots(clusters, name) -> None:
     # labels = [l if int(l)%2 == 0 else "" for l in labels]
     labels[-1] = f"≥{size_cutoff}"
 
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     ax.set_xticklabels(labels)
     
     

@@ -119,7 +119,7 @@ def clusterlength_per_month_and_casenumbers(cluster: list, dates: list, name: st
     # plot cluster lengths per month barplot
     
     plt.clf()
-    sns.set_theme() 
+    sns.set_theme(style="whitegrid",) 
     
     # cluster sizes
     ax = sns.barplot(x=months_clusters, y=cluster_lengths, color="#595959")
@@ -132,7 +132,10 @@ def clusterlength_per_month_and_casenumbers(cluster: list, dates: list, name: st
     title_symbol = "=" if CLUSTER_NAME[-1] == "0" else "≤"
     plt.title(f"Genetic threshold for clustering {title_symbol} {CLUSTER_NAME[-1]}") 
     
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     
     # save normal
     # plt.savefig("plots/clusters/Clusters_"+name+"_mean_per_months.pdf")
@@ -142,7 +145,7 @@ def clusterlength_per_month_and_casenumbers(cluster: list, dates: list, name: st
     # plot cluster lengths per month boxplot
     
     plt.clf()
-    sns.set_theme() 
+    sns.set_theme(style="whitegrid",) 
     
     # cluster sizes
     ax = sns.boxplot(x=months_clusters, y=cluster_lengths, color="#595959")
@@ -155,7 +158,10 @@ def clusterlength_per_month_and_casenumbers(cluster: list, dates: list, name: st
     title_symbol = "=" if CLUSTER_NAME[-1] == "0" else "≤"
     plt.title(f"Genetic threshold for clustering {title_symbol} {CLUSTER_NAME[-1]}") 
     
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     
     # save normal
     # plt.savefig("plots/clusters/Clusters_"+name+"_mean_per_months.pdf")
@@ -167,7 +173,7 @@ def clusterlength_per_month_and_casenumbers(cluster: list, dates: list, name: st
     # plot cluster lengths per size barplot
     
     plt.clf()
-    sns.set_theme() 
+    sns.set_theme(style="whitegrid",) 
     fig, ax = plt.subplots(figsize=(11, 6))
     
     # cluster sizes
@@ -181,7 +187,10 @@ def clusterlength_per_month_and_casenumbers(cluster: list, dates: list, name: st
     title_symbol = "=" if CLUSTER_NAME[-1] == "0" else "≤"
     plt.title(f"Genetic threshold for clustering {title_symbol} {CLUSTER_NAME[-1]}") 
     
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     
     # save normal
     # plt.savefig("plots/clusters/Clusters_"+name+"_mean_per_months.pdf")
@@ -191,7 +200,7 @@ def clusterlength_per_month_and_casenumbers(cluster: list, dates: list, name: st
     # plot cluster lengths per size boxplot
     
     plt.clf()
-    sns.set_theme() 
+    sns.set_theme(style="whitegrid",) 
     
     # empty_sizes = [s for s in range(2, max(sizes)) if s not in sizes]
     
@@ -207,7 +216,10 @@ def clusterlength_per_month_and_casenumbers(cluster: list, dates: list, name: st
     title_symbol = "=" if CLUSTER_NAME[-1] == "0" else "≤"
     plt.title(f"Genetic threshold for clustering {title_symbol} {CLUSTER_NAME[-1]}") 
     
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     
     # save normal
     # plt.savefig("plots/clusters/Clusters_"+name+"_mean_per_months.pdf")
@@ -223,7 +235,7 @@ def clusterlength_per_month_and_casenumbers(cluster: list, dates: list, name: st
 
     
     plt.clf()
-    sns.set_theme() 
+    sns.set_theme(style="whitegrid",) 
     fig, ax = plt.subplots(figsize=(11, 6))
     
     # cluster sizes
@@ -242,7 +254,10 @@ def clusterlength_per_month_and_casenumbers(cluster: list, dates: list, name: st
     # labels = [l if int(l)%2 == 0 else "" for l in labels]
     labels[-1] = f"≥{30}"
     
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     ax.set_xticklabels(labels)    
     
     # save normal
@@ -256,7 +271,7 @@ def clusterlength_per_month_and_casenumbers(cluster: list, dates: list, name: st
     # plot cluster lengths per size boxplot with cutoff
     
     plt.clf()
-    sns.set_theme() 
+    sns.set_theme(style="whitegrid",) 
     
     
     # cluster sizes
@@ -277,7 +292,10 @@ def clusterlength_per_month_and_casenumbers(cluster: list, dates: list, name: st
 
     ax.set_xticklabels(labels)
     
-    ax.set_facecolor('#EAEAEA')    
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)    
     
     # save normal
     # plt.savefig("plots/clusters/Clusters_"+name+"_mean_per_months.pdf")
@@ -289,7 +307,7 @@ def clusterlength_per_month_and_casenumbers(cluster: list, dates: list, name: st
     # plot cluster lengths as histogram
     
     plt.clf()
-    sns.set_theme() 
+    sns.set_theme(style="whitegrid",) 
     
     
     values, bins, bars = plt.hist(cluster_lengths, color="#595959", bins = max(cluster_lengths))
@@ -303,7 +321,10 @@ def clusterlength_per_month_and_casenumbers(cluster: list, dates: list, name: st
     title_symbol = "=" if CLUSTER_NAME[-1] == "0" else "≤"
     plt.title(f"Genetic threshold for clustering {title_symbol} {CLUSTER_NAME[-1]}") 
     
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     
     #save 
     plt.savefig("plots/clusters/lengths/Clusters_"+name+"_histogram_lengths.svg") #TODO same directory
@@ -336,13 +357,16 @@ def clusterlength_per_month_and_casenumbers(cluster: list, dates: list, name: st
     
     ##
     plt.clf()
-    sns.set_theme() 
+    sns.set_theme(style="whitegrid",) 
     fig, ax = plt.subplots(figsize=(30, 10))
     
     
     ax = sns.barplot(x=x, y=y,  color="#595959")
     # ax = sns.barplot(x=list(d_to_count.keys()), y=list(d_to_count.values()),  color="#595959")
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     
     # labels
     #plt.xlabel("Cluster length in days")

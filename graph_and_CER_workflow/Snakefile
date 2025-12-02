@@ -154,7 +154,7 @@ wildcard_constraints:
 
 rule prefilter_genetic_data:
     input: 
-        "data/genetic_data/Feb-Dez_2021.fasta.MSA.fa.fullDistanceMatrix.tab",
+        "data/genetic_data/Feb-Dez_2021_forMasking.fasta.MSA.fa.fullDistanceMatrix.tab",
         "data/genetic_data/current_samples_noseq.json",
     output: 
         "data/genetic_data/distancematrix_prefiltered.tab",

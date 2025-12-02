@@ -194,7 +194,7 @@ def plot_graph_edge_distribution(graph: object) -> None:
     ######################################### used in paper
         
     plt.clf()
-    sns.set_theme(font_scale=1.8) 
+    sns.set_theme(style="whitegrid",font_scale=1.8) 
     fig, ax = plt.subplots(figsize=(11.5, 7))
     plt.tight_layout()
     
@@ -224,7 +224,10 @@ def plot_graph_edge_distribution(graph: object) -> None:
     plt.tight_layout(pad=2)   
     
     plt.ylabel("Count")
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     
     plt.ylim(0, max( 15000, max(vals) ))
     

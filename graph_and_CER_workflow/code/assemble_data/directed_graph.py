@@ -194,7 +194,7 @@ def plot_data(edge_infos: list, direction_cutoff: int) -> None:
     ######################################### used in paper
     plt.clf()
  
-    sns.set_theme(font_scale=2.5) 
+    sns.set_theme(style="whitegrid", font_scale=2.5) 
     
     fig, ax = plt.subplots(figsize=(12, 11))
        
@@ -243,7 +243,10 @@ def plot_data(edge_infos: list, direction_cutoff: int) -> None:
     ax.figure.autofmt_xdate(rotation=45)
     plt.tight_layout(pad=2)   
     
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     
     # labels
     plt.title(f"Directionalisation cut-off > {direction_cutoff} days")
@@ -304,7 +307,7 @@ def plot_with_distances(graph: object, dm: dict, cutoff: int) -> None:
     ######################################### used in paper
 
     plt.clf()
-    sns.set_theme(font_scale=2.6) 
+    sns.set_theme(style="whitegrid", font_scale=2.6) 
     
     fig, ax = plt.subplots(figsize=(12, 8))
     
@@ -353,7 +356,10 @@ def plot_with_distances(graph: object, dm: dict, cutoff: int) -> None:
     labels = [item.get_text() for item in ax.get_xticklabels()]
     labels[-1] = '>= 7'
 
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     ax.set_xticklabels(labels)
 
     plt.savefig(f"plots/directed_graph/Directed_undirected_split_per_genetic_distance_{cutoff}_cutat7.svg")

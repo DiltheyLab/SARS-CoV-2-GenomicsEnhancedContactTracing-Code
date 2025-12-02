@@ -97,7 +97,7 @@ def plot_rates(rates: list, clusters:list, graph: object, dates: list, cluster_n
     ######################################### used in paper
     
     plt.clf()
-    sns.set_theme(font_scale=2.2) 
+    sns.set_theme(style="whitegrid",font_scale=2.2) 
     fig, ax = plt.subplots(figsize=(9, 6))
     plt.tight_layout()
     
@@ -111,7 +111,10 @@ def plot_rates(rates: list, clusters:list, graph: object, dates: list, cluster_n
 
     plt.xlabel("Cluster explanation rate")
     plt.ylabel("Count")
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     
     title_symbol = "=" if CLUSTER_NAME[-1] == "0" else "≤"
     plt.title(f"Genetic threshold for clustering {title_symbol} {CLUSTER_NAME[-1]}") 
@@ -129,7 +132,7 @@ def plot_rates(rates: list, clusters:list, graph: object, dates: list, cluster_n
     
     
     plt.clf()
-    sns.set_theme(font_scale=2.2) 
+    sns.set_theme(style="whitegrid",font_scale=2.2) 
     fig, ax = plt.subplots(figsize=(9, 6))
     plt.tight_layout()
     
@@ -167,7 +170,10 @@ def plot_rates(rates: list, clusters:list, graph: object, dates: list, cluster_n
     title_symbol = "=" if CLUSTER_NAME[-1] == "0" else "≤"
     plt.title(f"Genetic threshold for clustering {title_symbol} {CLUSTER_NAME[-1]}") 
 
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     
     plt.savefig(f"plots/inf_source_rate/{cluster_name}/{GRAPH_TYPE}/{edge_types}/cluster_explanation_rate_per_cluster_size_{JUMP_DISTANCE}.svg", bbox_inches='tight')
     
@@ -182,7 +188,7 @@ def plot_rates(rates: list, clusters:list, graph: object, dates: list, cluster_n
     
     
     plt.clf()
-    sns.set_theme(font_scale=2.2) 
+    sns.set_theme(style="whitegrid",font_scale=2.2) 
     fig, ax = plt.subplots(figsize=(9, 6))
     plt.tight_layout()
     
@@ -200,7 +206,10 @@ def plot_rates(rates: list, clusters:list, graph: object, dates: list, cluster_n
     
     title_symbol = "=" if CLUSTER_NAME[-1] == "0" else "≤"
     plt.title(f"Genetic threshold for clustering {title_symbol} {CLUSTER_NAME[-1]}") 
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     plt.savefig(f"plots/inf_source_rate/{cluster_name}/{GRAPH_TYPE}/{edge_types}/cluster_explanation_rate_per_month_{JUMP_DISTANCE}.svg", bbox_inches='tight')
     # plt.savefig(f"plots/cl_ex_rate/{cluster_name}/{GRAPH_TYPE}/{edge_types}/cluster_explanation_rate_per_month_{JUMP_DISTANCE}.pdf")
     
@@ -229,7 +238,7 @@ def count_edgetypes_per_component(rates: list, graph: object, edge_types: str) -
     ######################################### used in paper
         
     plt.clf()
-    sns.set_theme(font_scale=1.8) 
+    sns.set_theme(style="whitegrid",font_scale=1.8) 
     fig, ax = plt.subplots(figsize=(11.5, 7))
     plt.tight_layout()
     
@@ -260,7 +269,10 @@ def count_edgetypes_per_component(rates: list, graph: object, edge_types: str) -
     
     # plt.xlabel("Edge type")
     plt.ylabel("Count")
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     
     plt.ylim(0,1000 if max(vals) < 1000 else 1200)
     

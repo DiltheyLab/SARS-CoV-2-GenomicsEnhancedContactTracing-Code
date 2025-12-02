@@ -111,7 +111,7 @@ def basic_cluster_size_plots(clusters: dict, rates: dict, name: str) -> None:
     # plot with size cutoff
 
     plt.clf()
-    sns.set_theme(font_scale=2) 
+    sns.set_theme(style="whitegrid",font_scale=2) 
     fig, ax = plt.subplots(figsize=(11, 7))
     
     
@@ -153,7 +153,10 @@ def basic_cluster_size_plots(clusters: dict, rates: dict, name: str) -> None:
     ax.set_xticklabels(labels)
     
     # ax.figure.autofmt_xdate(rotation=45)
-    ax.set_facecolor('#EAEAEA') 
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False) 
     
     plt.tight_layout()
     plt.savefig("plots/downsampling/Clusters_"+name+"_cluster_sizes_catplot.svg")
@@ -165,7 +168,7 @@ def basic_cluster_size_plots(clusters: dict, rates: dict, name: str) -> None:
     # plot with size cutoff per cases in cluster
 
     plt.clf()
-    sns.set_theme(font_scale=2) 
+    sns.set_theme(style="whitegrid",font_scale=2) 
     fig, ax = plt.subplots(figsize=(19, 10))
     
     ax = sns.pointplot(x=x, y=y_per_clustercases, hue=hue, palette=["#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F", "#E5C494"])
@@ -183,7 +186,10 @@ def basic_cluster_size_plots(clusters: dict, rates: dict, name: str) -> None:
     labels[-1] = f"≥{size_cutoff}"
     ax.set_xticklabels(labels)
     
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     
     plt.tight_layout()
 
@@ -199,9 +205,12 @@ def basic_cluster_size_plots(clusters: dict, rates: dict, name: str) -> None:
     # plot with size cutoff as violinplot
 
     plt.clf()
-    sns.set_theme(font_scale=2) 
+    sns.set_theme(style="whitegrid",font_scale=2) 
     fig, ax = plt.subplots(figsize=(19, 10))
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     
     
     ax = sns.violinplot(x=violin_subsampling_pc, y=violin_size, inner="quart", color="#595959")
@@ -225,7 +234,7 @@ def basic_cluster_size_plots(clusters: dict, rates: dict, name: str) -> None:
     # plot Cases in cluster / sequenced cases
 
     plt.clf()
-    sns.set_theme(font_scale=1.7) 
+    sns.set_theme(style="whitegrid",font_scale=1.7) 
     fig, ax = plt.subplots(figsize=(9, 6))
     
     x = []
@@ -247,7 +256,10 @@ def basic_cluster_size_plots(clusters: dict, rates: dict, name: str) -> None:
     plt.title(f"Genetic threshold for clustering {title_symbol} {CLUSTER_NAME[-1]}") 
     
     
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     plt.tight_layout()
 
     plt.savefig("plots/downsampling/Clusters_"+name+"_cluster_cases_per_seq_cases.svg")
@@ -284,7 +296,7 @@ def cer_plots(rates: dict, name:str) -> None:
     # plot CER
     
     plt.clf()
-    sns.set_theme(font_scale=2.2) 
+    sns.set_theme(style="whitegrid",font_scale=2.2) 
     fig, ax = plt.subplots(figsize=(10, 7))
     
     
@@ -295,7 +307,10 @@ def cer_plots(rates: dict, name:str) -> None:
     title_symbol = "=" if CLUSTER_NAME[-1] == "0" else "≤"
     plt.title(f"Genetic threshold for clustering {title_symbol} {CLUSTER_NAME[-1]}") 
     
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     
     
     plt.tight_layout()
@@ -308,7 +323,7 @@ def cer_plots(rates: dict, name:str) -> None:
     # plot infsources per seq cases
 
     plt.clf()
-    sns.set_theme(font_scale=2.2) 
+    sns.set_theme(style="whitegrid",font_scale=2.2) 
     fig, ax = plt.subplots(figsize=(10, 7))
     
     
@@ -321,7 +336,10 @@ def cer_plots(rates: dict, name:str) -> None:
     plt.title(f"Genetic threshold for clustering {title_symbol} {CLUSTER_NAME[-1]}") 
     
     plt.tight_layout()
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
 
     plt.savefig("plots/downsampling/CER/infsources_per_sequenced_cases_"+name+".svg")
 
@@ -335,7 +353,7 @@ def cer_plots(rates: dict, name:str) -> None:
     # plot genetic_infsource_rate_per_sequenced_cases
 
     plt.clf()
-    sns.set_theme(font_scale=2) 
+    sns.set_theme(style="whitegrid",font_scale=2) 
     fig, ax = plt.subplots(figsize=(10, 7))
     
     
@@ -348,7 +366,10 @@ def cer_plots(rates: dict, name:str) -> None:
     plt.title(f"Genetic threshold for clustering {title_symbol} {CLUSTER_NAME[-1]}") 
     
     plt.tight_layout()
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
 
     plt.savefig("plots/downsampling/CER/genetic_infsources_per_sequenced_cases_"+name+".svg")
     
@@ -357,7 +378,7 @@ def cer_plots(rates: dict, name:str) -> None:
     # plot cases with infection source
 
     plt.clf()
-    sns.set_theme(font_scale=2.2) 
+    sns.set_theme(style="whitegrid",font_scale=2.2) 
     fig, ax = plt.subplots(figsize=(10, 7))
     
     
@@ -369,7 +390,10 @@ def cer_plots(rates: dict, name:str) -> None:
     plt.title(f"Genetic threshold for clustering {title_symbol} {CLUSTER_NAME[-1]}") 
     
     plt.tight_layout()
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
 
     plt.savefig("plots/downsampling/CER/infsources_"+name+".svg")
     

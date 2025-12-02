@@ -128,7 +128,7 @@ def plot_cer_differences(table: list) -> None :
     
     
     plt.clf()
-    sns.set_theme(font_scale=2.4) 
+    sns.set_theme(style="whitegrid",font_scale=2.4) 
     
     fig, ax = plt.subplots(figsize=(12, 8))
     
@@ -142,7 +142,10 @@ def plot_cer_differences(table: list) -> None :
     
     ax.set_ylim([0, 50])
     
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     
     plt.ylabel("Cluster explanation rate (in %)")
     plt.xlabel("Directionalization cutoff")
@@ -157,7 +160,7 @@ def plot_cer_differences(table: list) -> None :
     
      
     plt.clf()
-    sns.set_theme(font_scale=2.2) 
+    sns.set_theme(style="whitegrid",font_scale=2.2) 
     
     fig, ax = plt.subplots(figsize=(12, 8))
     
@@ -179,7 +182,10 @@ def plot_cer_differences(table: list) -> None :
     
     
     ax.set_ylim([0, 50])
-    ax.set_facecolor('#EAEAEA')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     
     
     plt.ylabel("Cases with putative infection source [%]")
