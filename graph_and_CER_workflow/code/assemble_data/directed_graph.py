@@ -44,10 +44,6 @@ def transform_to_directed(graph: object, direction_cutoff: int, edges_path: str)
         object: nx Multigraph object with directed edges
     """
     
-    # if 0 we want >0 and <0 as cutoff
-    # if not 0 we want >= cutoff and <= cutoff
-    if direction_cutoff != 0:
-        direction_cutoff += 1
     
     infected_by_pairs = []
     with open(edges_path, "r") as edge_file:
@@ -117,7 +113,8 @@ def transform_to_directed(graph: object, direction_cutoff: int, edges_path: str)
             # calculate datediff
             datediff = (date1-date2).days
             
-            
+
+
             # if case 2 was earlier than case 1 by enough
             if datediff > direction_cutoff:
                 all_pairs = [ (caseid2, caseid1) ]

@@ -370,6 +370,12 @@ def check_pairwise_datediffs(graph: object, dm: dict, edges_path: str) -> None :
         probs.append( (0.5 * P_ba_a_to_b) / (0.5 * P_ba_a_to_b + 0.5 * P_ba_b_to_a ))
         
     
+    # save the probabilities into a json file so it can be used outside of this script
+    prob_stats = {
+        xdiff:prob for xdiff, prob in zip(x_diffs, probs)
+    }
+    save_clusters("data/symptononset_probability_json", prob_stats)
+    
     
     plt.clf()
     sns.set_theme(style="whitegrid",font_scale=2.0) 

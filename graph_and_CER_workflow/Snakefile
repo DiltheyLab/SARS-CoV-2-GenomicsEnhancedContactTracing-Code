@@ -438,6 +438,7 @@ rule editor_changes_genetic_connections:
         "data/clusters/{cluster_type}.json", 
         "data/graph/FallIDs-Ausbruch_IDs_2021.csv",
         "data/graph/Outbreak_to_context.csv",
+        "data/genetic_data/Subsampling_Dataset.csv",
     output: 
         "data/inf_source_rate/changes/Saved_values_{cluster_type}.json", 
     log:
