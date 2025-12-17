@@ -285,7 +285,7 @@ def compare_infectionsource_counts(dm: dict, graph: object) -> dict:
 
         
         
-        ax = sns.barplot(x=keys, y=vals, color="#595959")
+        ax = sns.barplot(x=keys, y=vals, color="#595959", saturation=1)
         
         sum_edges = sum( vals )
         percentage_strings = [ f"{ round(100 * v / sum_edges, 2) }%"  for v in vals ]
@@ -725,7 +725,7 @@ def before_during_after_outbreaks(graph: object, outbreaks: dict, outbreak_to_co
 
         # # Plot with seaborn
         # # plt.figure(figsize=(12, 6))
-        # sns.barplot(x=vals_contexts, y=vals_numbers, hue=vals_bins, palette=palette)
+        # sns.barplot(x=vals_contexts, y=vals_numbers, hue=vals_bins, palette=palette, saturation=1)
         
         # plt.ylim([0,3] if CLUSTER_TYPE[-1] == "1" else [0,1.5])
         
@@ -763,9 +763,9 @@ def before_during_after_outbreaks(graph: object, outbreaks: dict, outbreak_to_co
 
         # Plot with seaborn
         # plt.figure(figsize=(12, 6))
-        sns.barplot(x=vals_contexts, y=vals_numbers_abolut, hue=vals_bins, palette=palette, ax=ax)
+        sns.barplot(x=vals_contexts, y=vals_numbers_abolut, hue=vals_bins, palette=palette, ax=ax, saturation=1)
         
-        plt.ylim([0,200] if CLUSTER_TYPE[-1] == "1" else [0,80])
+        plt.ylim([0, 150] if CLUSTER_TYPE[-1] == "1" else [0,80])
         
         plt.xticks(rotation=45, ha="right")
         plt.tight_layout()

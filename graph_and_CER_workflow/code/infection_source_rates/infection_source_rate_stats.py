@@ -102,7 +102,7 @@ def plot_rates(rates: list, clusters:list, graph: object, dates: list, cluster_n
     plt.tight_layout()
     
     
-    values, bins, bars = plt.hist(rates_list, color="#595959")#, bins = 40)
+    values, bins, bars = plt.hist(rates_list, color="#595959", saturation=1)#, bins = 40)
     
     plt.bar_label(bars, labels=[f"{round(100*v/len(rates_list), 1)}%" for v in values], fontsize=18)
     print("Bars: ", bars)
@@ -148,7 +148,7 @@ def plot_rates(rates: list, clusters:list, graph: object, dates: list, cluster_n
 
 
     # cluster sizes
-    ax = sns.barplot(x=sizes_filled_cutoff, y=rates_filled, color="#595959")
+    ax = sns.barplot(x=sizes_filled_cutoff, y=rates_filled, color="#595959", saturation=1)
     
     # lock y axis to 0-1
     ax.set_ylim([0, 0.7])
@@ -194,7 +194,7 @@ def plot_rates(rates: list, clusters:list, graph: object, dates: list, cluster_n
     
     months_clusters = [datetime.strptime(date, "%d.%m.%Y").month for date in dates]
 
-    ax = sns.barplot(x=months_clusters, y=rates_list, color="#595959")
+    ax = sns.barplot(x=months_clusters, y=rates_list, color="#595959", saturation=1)
 
     # lock y axis to 0-1
     ax.set_ylim([0, 0.7])
@@ -257,7 +257,7 @@ def count_edgetypes_per_component(rates: list, graph: object, edge_types: str) -
     keys = [german_to_english_name[key] for key, _ in sorted(list(edgetypes_to_count.items()), key= lambda x: x[1])[::-1]]
     
     
-    ax = sns.barplot(x=keys, y=vals, color="#595959")
+    ax = sns.barplot(x=keys, y=vals, color="#595959", saturation=1)
     
     sum_edges = sum(list( edgetypes_to_count.values() ))
     percentage_strings = [ f"{ round(100 * v / sum_edges, 2) }%"  for v in vals ]

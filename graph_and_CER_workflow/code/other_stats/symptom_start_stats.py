@@ -116,7 +116,7 @@ def check_symptom_starts_simple(in_fname: str, graph: object) -> None:
             counts.append(0)
             
 
-    ax = sns.barplot(x=diffs, y=counts, color="#595959")
+    ax = sns.barplot(x=diffs, y=counts, color="#595959", saturation=1)
     
     for i,label in enumerate(ax.xaxis.get_ticklabels()):
         label.set_visible(False)
@@ -298,7 +298,7 @@ def check_pairwise_datediffs(graph: object, dm: dict, edges_path: str) -> None :
 
     x_diffs = list(range(min(diffs_ib), max(diffs_ib)+1 ))
 
-    ax = sns.barplot(x=x_diffs, y=occurrances, color="#595959")
+    ax = sns.barplot(x=x_diffs, y=occurrances, color="#595959", saturation=1)
     
     
     # labels
@@ -382,7 +382,7 @@ def check_pairwise_datediffs(graph: object, dm: dict, edges_path: str) -> None :
     fig, ax = plt.subplots(figsize=(9, 6))
     
 
-    ax.plot(range(-4, 5), probs[:9],  color="#595959") # TODO this is set on our data. needs generalisaion
+    ax.plot(range(-4, 5), probs[:9],  color="#595959", saturation=1) # TODO this is set on our data. needs generalisaion
     
     
     plt.ylabel('P(b infected a)')  # we already handled the x-label with ax1

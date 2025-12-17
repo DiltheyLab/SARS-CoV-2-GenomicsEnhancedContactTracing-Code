@@ -151,7 +151,7 @@ def plot_combined_stats(comb_to_stats, outpath):
     ]
     
     
-    ax = sns.barplot(x=label, y=value, color="#595959")
+    ax = sns.barplot(x=label, y=value, color="#595959", saturation=1)
     
     
     bar_labels = [f"{round(v*100,2)}%" for v in value]

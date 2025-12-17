@@ -122,7 +122,7 @@ def clusterlength_per_month_and_casenumbers(cluster: list, dates: list, name: st
     sns.set_theme(style="whitegrid",) 
     
     # cluster sizes
-    ax = sns.barplot(x=months_clusters, y=cluster_lengths, color="#595959")
+    ax = sns.barplot(x=months_clusters, y=cluster_lengths, color="#595959", saturation=1)
     
     # label stuff
     ax.set_xlabel("Month of 2021")
@@ -148,7 +148,7 @@ def clusterlength_per_month_and_casenumbers(cluster: list, dates: list, name: st
     sns.set_theme(style="whitegrid",) 
     
     # cluster sizes
-    ax = sns.boxplot(x=months_clusters, y=cluster_lengths, color="#595959")
+    ax = sns.boxplot(x=months_clusters, y=cluster_lengths, color="#595959", saturation=1)
     
     # label stuff
     ax.set_xlabel("Month of 2021")
@@ -177,7 +177,7 @@ def clusterlength_per_month_and_casenumbers(cluster: list, dates: list, name: st
     fig, ax = plt.subplots(figsize=(11, 6))
     
     # cluster sizes
-    ax = sns.barplot(x=sizes, y=cluster_lengths, color="#595959")
+    ax = sns.barplot(x=sizes, y=cluster_lengths, color="#595959", saturation=1)
     
     # label stuff
     ax.set_xlabel("Cluster size")
@@ -205,7 +205,7 @@ def clusterlength_per_month_and_casenumbers(cluster: list, dates: list, name: st
     # empty_sizes = [s for s in range(2, max(sizes)) if s not in sizes]
     
     # cluster sizes
-    ax = sns.boxplot(x=sizes, y=cluster_lengths, color="#595959")
+    ax = sns.boxplot(x=sizes, y=cluster_lengths, color="#595959", saturation=1)
     # ax = sns.boxplot(x=sizes + empty_sizes, y=cluster_lengths + [0]*len(empty_sizes), color="#595959")
     
     # label stuff
@@ -239,7 +239,7 @@ def clusterlength_per_month_and_casenumbers(cluster: list, dates: list, name: st
     fig, ax = plt.subplots(figsize=(11, 6))
     
     # cluster sizes
-    ax = sns.barplot(x=sizes_cutoff, y=cluster_lengths, color="#595959")
+    ax = sns.barplot(x=sizes_cutoff, y=cluster_lengths, color="#595959", saturation=1)
     
     # label stuff
     ax.set_xlabel("Cluster size")
@@ -275,7 +275,7 @@ def clusterlength_per_month_and_casenumbers(cluster: list, dates: list, name: st
     
     
     # cluster sizes
-    ax = sns.boxplot(x=sizes_cutoff, y=cluster_lengths, color="#595959")
+    ax = sns.boxplot(x=sizes_cutoff, y=cluster_lengths, color="#595959", saturation=1)
     
     # label stuff
     ax.set_xlabel("Cluster size")
@@ -310,7 +310,7 @@ def clusterlength_per_month_and_casenumbers(cluster: list, dates: list, name: st
     sns.set_theme(style="whitegrid",) 
     
     
-    values, bins, bars = plt.hist(cluster_lengths, color="#595959", bins = max(cluster_lengths))
+    values, bins, bars = plt.hist(cluster_lengths, color="#595959", bins = max(cluster_lengths), saturation=1)
     
     # plt.bar_label(bars, labels=[f"{round(100*v/len(rates_list), 1)}%" for v in values], fontsize=10)
 
@@ -361,7 +361,7 @@ def clusterlength_per_month_and_casenumbers(cluster: list, dates: list, name: st
     fig, ax = plt.subplots(figsize=(30, 10))
     
     
-    ax = sns.barplot(x=x, y=y,  color="#595959")
+    ax = sns.barplot(x=x, y=y,  color="#595959", saturation=1)
     # ax = sns.barplot(x=list(d_to_count.keys()), y=list(d_to_count.values()),  color="#595959")
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)

@@ -213,7 +213,7 @@ def plot_graph_edge_distribution(graph: object) -> None:
     keys = [german_to_english_name[key] for key, _ in sorted(list(edgetypes_to_count.items()), key= lambda x: x[1])[::-1]]
     
     
-    ax = sns.barplot(x=keys, y=vals, color="#595959")
+    ax = sns.barplot(x=keys, y=vals, color="#595959", saturation=1)
     
     sum_edges = sum(list( edgetypes_to_count.values() ))
     percentage_strings = [ f"{ round(100 * v / sum_edges, 2) }%"  for v in vals ]

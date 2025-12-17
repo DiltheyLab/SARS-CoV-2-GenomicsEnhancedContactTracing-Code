@@ -133,7 +133,7 @@ def plot_cer_differences(table: list) -> None :
     fig, ax = plt.subplots(figsize=(12, 8))
     
     
-    ax = sns.barplot(x=x, y=y, hue=hues, palette=["#FC8D62", "#66C2A5"] )
+    ax = sns.barplot(x=x, y=y, hue=hues, palette=["#FC8D62", "#66C2A5"] , saturation=1)
     
     
     ax.bar_label(ax.containers[0], labels=[y[0], y[2]])
@@ -173,7 +173,7 @@ def plot_cer_differences(table: list) -> None :
     hues = ["... of all cases", "... of sequenced cases", "... of cases in cluster (CER)"] *2 
     
     
-    ax = sns.barplot(x=x, y=y, hue=hues, palette=["#FC8D62", "#66C2A5", "#8DA0CB"] )
+    ax = sns.barplot(x=x, y=y, hue=hues, palette=["#FC8D62", "#66C2A5", "#8DA0CB"] , saturation=1)
     
     
     ax.bar_label(ax.containers[0], labels=[y[0], y[3]])

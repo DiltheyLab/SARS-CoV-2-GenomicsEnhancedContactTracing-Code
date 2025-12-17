@@ -71,7 +71,7 @@ def plot_same_address_component_sizes(graph: object, edge_type: str) -> None :
 
     # sns.despine() 
 
-    ax = sns.barplot(x=list(range(2, max(lengths)+1 )), y=occurrances, color="#595959", width=.95)
+    ax = sns.barplot(x=list(range(2, max(lengths)+1 )), y=occurrances, color="#595959", width=.95, saturation=1)
 
     fontsize = 18 if max(lengths) < 13 else 10
     ax.bar_label(ax.containers[0], labels=[str(count) if count!=0 else "" for count in occurrances], fontsize=fontsize)

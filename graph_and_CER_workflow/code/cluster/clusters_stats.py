@@ -124,11 +124,11 @@ def clustersize_per_month_and_casenumbers(cluster: list, dates: list, name: str,
     
     
     # cluster sizes
-    ax = sns.barplot(x=list(range(2,13)), y=cases_per_month_list, color="#FC8D62",width=.95, label = "Cases")
+    ax = sns.barplot(x=list(range(2,13)), y=cases_per_month_list, color="#FC8D62",width=.95, label = "Cases", saturation=1)
 
     # case numbers
     ax2 = ax.twinx()
-    pl2 = sns.barplot(x=months_clusters, y=sizes, width=.6, color="#66C2A5", ax=ax2,  label="Mean cluster size")
+    pl2 = sns.barplot(x=months_clusters, y=sizes, width=.6, color="#66C2A5", ax=ax2,  label="Mean cluster size", saturation=1)
     
     # set cluster sizes in foreground
     ax.set_zorder(9)
@@ -212,7 +212,7 @@ def basic_cluster_size_plots(clusters, name) -> None:
     x_positions = list(range(2, size_cutoff+1))
     y_vals = [sizes_cutoff.count(x) for x in x_positions]
     
-    ax = sns.barplot(x=x_positions, y=y_vals, color="#595959")
+    ax = sns.barplot(x=x_positions, y=y_vals, color="#595959", saturation=1)
 
     plt.xlabel("Cluster Size")
     plt.ylabel("Count")

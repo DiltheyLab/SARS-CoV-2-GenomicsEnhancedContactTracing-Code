@@ -215,7 +215,7 @@ def plot_data(edge_infos: list, direction_cutoff: int) -> None:
     
     
     ax = sns.barplot(x=types, y=counts, hue=[amount_to_string[a] for a in amount_edges],
-                     palette=["#FC8D62", "#66C2A5"])#, color="skyblue")
+                     palette=["#FC8D62", "#66C2A5"], saturation=1)#, color="skyblue")
     
 
     totals = defaultdict(int)
@@ -323,7 +323,7 @@ def plot_with_distances(graph: object, dm: dict, cutoff: int) -> None:
     ax = sns.barplot(x= x_one + x_both,
                     y= y_one + y_both,
                     hue = ["Directed edges"] * len(x_one) + ["Undirected edges"] * len(x_both),
-                    palette=["#FC8D62", "#66C2A5"])
+                    palette=["#FC8D62", "#66C2A5"], saturation=1)
 
 
     ax.set_ylabel('Count')
