@@ -102,7 +102,7 @@ def plot_rates(rates: list, clusters:list, graph: object, dates: list, cluster_n
     plt.tight_layout()
     
     
-    values, bins, bars = plt.hist(rates_list, color="#595959", saturation=1)#, bins = 40)
+    values, bins, bars = plt.hist(rates_list, color="#595959")#, bins = 40)
     
     plt.bar_label(bars, labels=[f"{round(100*v/len(rates_list), 1)}%" for v in values], fontsize=18)
     print("Bars: ", bars)

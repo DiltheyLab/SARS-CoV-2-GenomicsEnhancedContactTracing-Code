@@ -625,6 +625,9 @@ def before_during_after_outbreaks(graph: object, outbreaks: dict, outbreak_to_co
     ################################
     # Iterate over the outbreaks and theirs connected cases and sort them into the bins
     
+    outbreak_to_befduaf_cases = {}
+    context_to_befduaf_cases = {}
+    
     # do the single plots and also collect data for the combined plot
     for outbreak_name, conn_cases in outbreak_to_cases_gen_cutoff.items():
     # for outbreak_name, outbreak_timediffs in outbreaks_starttime_diffs_cutoff.items():
@@ -641,6 +644,17 @@ def before_during_after_outbreaks(graph: object, outbreaks: dict, outbreak_to_co
         else:
             continue
         
+        outbreak_to_befduaf_cases[outbreak_name] = {
+            "before" : 0,
+            "during" : 0,
+            "after" : 0,
+        }
+        if outbreak_context not in context_to_befduaf_cases:
+            context_to_befduaf_cases[outbreak_context] = {
+                "before" : 0,
+                "during" : 0,
+                "after" : 0,
+            }
         
         # calculate the time diff to the outbreak end date
         # TODO mayb should move start time dif here too?
@@ -656,12 +670,18 @@ def before_during_after_outbreaks(graph: object, outbreaks: dict, outbreak_to_co
             
             if timediff < 0:
                 context_to_bins_cutoff[outbreak_context]["before"] += add_value
+                outbreak_to_befduaf_cases[outbreak_name]["before"] += 1
+                context_to_befduaf_cases[outbreak_context]["before"] += 1
                 
             elif timediff <= end_timediff:
                 context_to_bins_cutoff[outbreak_context]["during"] += add_value
+                outbreak_to_befduaf_cases[outbreak_name]["during"] += 1
+                context_to_befduaf_cases[outbreak_context]["during"] += 1
                 
             else:
                 context_to_bins_cutoff[outbreak_context]["after"] += add_value
+                outbreak_to_befduaf_cases[outbreak_name]["after"] += 1
+                context_to_befduaf_cases[outbreak_context]["after"] += 1
                 
             
         # for timediff in outbreak_timediffs:
@@ -674,8 +694,27 @@ def before_during_after_outbreaks(graph: object, outbreaks: dict, outbreak_to_co
         #     else:
         #         context_to_bins[outbreak_context]["after"] += add_value
                 
-                
-
+    if downsample_dir == "":     
+         
+        out_lines = [["Outbreak", "before_count", "during_count", "after_count"]]
+        for key, data in outbreak_to_befduaf_cases.items():
+            out_lines.append([key, data["before"], data["during"], data["after"]])
+        
+        with open(f"data/before_during_after_cases_per_outbreak_{CLUSTER_TYPE}.csv", "w") as outfile:
+            for line in out_lines:
+                outfile.write("\t".join([str(l) for l in line]) + "\n")
+        
+         
+        out_lines = [["Context", "before_count", "during_count", "after_count"]]
+        for key, data in context_to_befduaf_cases.items():
+            out_lines.append([key, data["before"], data["during"], data["after"]])
+        
+        with open(f"data/before_during_after_cases_per_context_{CLUSTER_TYPE}.csv", "w") as outfile:
+            for line in out_lines:
+                outfile.write("\t".join([str(l) for l in line]) + "\n")
+        
+        # save_clusters(f"data/before_during_after_cases_per_outbreak_{CLUSTER_TYPE}.json", outbreak_to_befduaf_cases)
+        # save_clusters(f"data/before_during_after_cases_per_context_{CLUSTER_TYPE}.json", context_to_befduaf_cases)
 
     ################################
     # Plot the bin information
@@ -944,35 +983,35 @@ if __name__ == "__main__":
     
     
     ############ 4.5 create downsampled plots of the befor/during/after stuff
-    subsample_keys_wanted = [
-        "subsample_1pc_rep1",
-        "subsample_2.5pc_rep1",
-        "subsample_5pc_rep1",
-        "subsample_10pc_rep1",
-        "subsample_15pc_rep1",
-        "subsample_20pc_rep1",
-    ]
+    # subsample_keys_wanted = [
+    #     "subsample_1pc_rep1",
+    #     "subsample_2.5pc_rep1",
+    #     "subsample_5pc_rep1",
+    #     "subsample_10pc_rep1",
+    #     "subsample_15pc_rep1",
+    #     "subsample_20pc_rep1",
+    # ]
     
-    for key in subsample_keys_wanted:
-        print(f"subsampling for {key}")
+    # for key in subsample_keys_wanted:
+    #     print(f"subsampling for {key}")
         
-        # subsample the graph
-        tmp_graph = graph.copy()
-        for node, data in tmp_graph.nodes(data=True):
+    #     # subsample the graph
+    #     tmp_graph = graph.copy()
+    #     for node, data in tmp_graph.nodes(data=True):
             
-            if "sample_id" in data and data["sample_id"] != "":
+    #         if "sample_id" in data and data["sample_id"] != "":
                 
-                if not subsamples[key][node]:
+    #             if not subsamples[key][node]:
                     
-                    tmp_graph.nodes[node]["sample_id"] = ""
-                    tmp_graph.nodes[node]["dm_index"] = ""
+    #                 tmp_graph.nodes[node]["sample_id"] = ""
+    #                 tmp_graph.nodes[node]["dm_index"] = ""
         
-                    continue
+    #                 continue
         
         
         
-        output_dict_tmp = before_during_after_outbreaks(tmp_graph, outbreaks, outbreak_to_context, "Timediffs", case_to_lineage_date,
-                                                        downsample_dir="downsampling/", downsample_filename=f"_{key}")
+    #     output_dict_tmp = before_during_after_outbreaks(tmp_graph, outbreaks, outbreak_to_context, "Timediffs", case_to_lineage_date,
+    #                                                     downsample_dir="downsampling/", downsample_filename=f"_{key}")
         
 
     

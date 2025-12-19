@@ -137,7 +137,7 @@ def basic_cluster_size_plots(clusters: dict, rates: dict, name: str) -> None:
             y_per_clustercases.append(count / subsampling_to_clustercount[g])
     
     
-    ax = sns.pointplot(x=x, y=y, hue=hue, palette=["#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F", "#E5C494"], saturation=1)
+    ax = sns.pointplot(x=x, y=y, hue=hue, palette=["#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F", "#E5C494"])
     
     plt.xlabel("Cluster sizes")
     plt.ylabel("Count")
@@ -171,7 +171,7 @@ def basic_cluster_size_plots(clusters: dict, rates: dict, name: str) -> None:
     sns.set_theme(style="whitegrid",font_scale=2) 
     fig, ax = plt.subplots(figsize=(19, 10))
     
-    ax = sns.pointplot(x=x, y=y_per_clustercases, hue=hue, palette=["#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F", "#E5C494"], saturation=1)
+    ax = sns.pointplot(x=x, y=y_per_clustercases, hue=hue, palette=["#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F", "#E5C494"])
     
     plt.xlabel("Cluster sizes")
     plt.ylabel("Count / cases in clusters")

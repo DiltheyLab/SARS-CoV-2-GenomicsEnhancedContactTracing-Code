@@ -310,7 +310,7 @@ def clusterlength_per_month_and_casenumbers(cluster: list, dates: list, name: st
     sns.set_theme(style="whitegrid",) 
     
     
-    values, bins, bars = plt.hist(cluster_lengths, color="#595959", bins = max(cluster_lengths), saturation=1)
+    values, bins, bars = plt.hist(cluster_lengths, color="#595959", bins = max(cluster_lengths))
     
     # plt.bar_label(bars, labels=[f"{round(100*v/len(rates_list), 1)}%" for v in values], fontsize=10)
 
