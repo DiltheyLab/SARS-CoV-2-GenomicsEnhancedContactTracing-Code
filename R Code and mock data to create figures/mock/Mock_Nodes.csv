@@ -1,0 +1,101 @@
+CaseID;SeqID;Meldedatum;Impfung_Anzahl;Impfung_Datum;Impfung_Impfstoff;Count_Kontaktpersonen;Count_Kontaktpersonen_Duesseldorf;AbsonderungVon;Symptome;Lineage;Ns
+CVD2021-001;;27.11.2021 12:39;2;13.06.2021 00:00;Kombination AstraZeneca/BioNTech;1;1;27.11.2021 12:39;fever;;4
+CVD2021-002;;30.11.2021 15:45;2;23.07.2021 00:00;mRNA (BioNTech / Pfizer);0;0;30.11.2021 15:45;fever;AY.122;68
+CVD2021-003;;10.11.2021 11:08;2;;mRNA  (Moderna);1;1;10.11.2021 11:08;fever;;84
+CVD2021-004;;06.11.2021 11:27;2;;-nicht erhoben-;1;1;06.11.2021 11:27;fever;;75
+CVD2021-005;;17.11.2021 07:56;2;19.06.2021 00:00;mRNA (BioNTech / Pfizer);3;3;17.11.2021 07:56;fever;;58
+CVD2021-006;;21.11.2021 14:19;2;16.09.2021 00:00;mRNA  (Moderna);1;1;21.11.2021 14:19;fever;B.1.617.2;9
+CVD2021-007;;14.11.2021 09:28;2;18.06.2021 00:00;Kombination AstraZeneca/BioNTech;2;2;14.11.2021 09:28;fever;;35
+CVD2021-008;;30.11.2021 11:34;1;;-nicht erhoben-;6;6;30.11.2021 11:34;fever;;78
+CVD2021-009;;26.11.2021 09:27;-nicht erhoben-;;Kombination AstraZeneca/BioNTech;4;4;26.11.2021 09:27;fever;AY.122;69
+CVD2021-0010;;24.11.2021 08:24;2;17.09.2021 00:00;-nicht erhoben-;0;0;24.11.2021 08:24;fever;AY.43;25
+CVD2021-0011;;26.11.2021 10:41;2;14.07.2021 00:00;mRNA (BioNTech / Pfizer);2;2;26.11.2021 10:41;fever;;30
+CVD2021-0012;;18.11.2021 10:12;3;;mRNA (BioNTech / Pfizer);3;3;18.11.2021 10:12;fever;;53
+CVD2021-0013;;16.11.2021 11:12;2;18.06.2021 00:00;-nicht erhoben-;1;1;16.11.2021 11:12;fever;;49
+CVD2021-0014;;28.11.2021 15:26;3;;vektorbasiert (Johnson&Johnson bzw. Janssen-Cilag);0;0;28.11.2021 15:26;fever;;44
+CVD2021-0015;;30.11.2021 13:24;2;08.06.2021 00:00;mRNA (BioNTech / Pfizer);0;0;30.11.2021 13:24;fever;;63
+CVD2021-0016;;23.11.2021 14:41;-nicht erhoben-;;mRNA (BioNTech / Pfizer);0;0;23.11.2021 14:41;fever;;76
+CVD2021-0017;;19.11.2021 09:19;1;24.06.2021 00:00;-nicht erhoben-;2;2;19.11.2021 09:19;fever;;19
+CVD2021-0018;;27.11.2021 08:28;-nicht erhoben-;20.05.2021 00:00;-nicht erhoben-;2;2;27.11.2021 08:28;fever;;40
+CVD2021-0019;;26.11.2021 15:22;-nicht erhoben-;;mRNA (BioNTech / Pfizer);2;2;26.11.2021 15:22;fever;;29
+CVD2021-0020;;26.11.2021 14:07;-nicht erhoben-;;-nicht erhoben-;0;0;26.11.2021 14:07;fever;AY.122;20
+CVD2021-0021;;09.11.2021 09:49;1;12.08.2021 00:00;mRNA (BioNTech / Pfizer);0;0;09.11.2021 09:49;fever;;67
+CVD2021-0022;;16.11.2021 17:08;2;;mRNA (BioNTech / Pfizer);0;0;16.11.2021 17:08;fever;;4
+CVD2021-0023;;22.11.2021 13:50;-nicht erhoben-;01.07.2021 00:00;mRNA (BioNTech / Pfizer);3;3;22.11.2021 13:50;fever;;74
+CVD2021-0024;;21.11.2021 12:34;2;;-nicht erhoben-;0;0;21.11.2021 12:34;fever;;12
+CVD2021-0025;;04.11.2021 14:56;-nicht erhoben-;;mRNA (BioNTech / Pfizer);1;1;04.11.2021 14:56;fever;;9
+CVD2021-0026;;22.11.2021 10:47;2;09.07.2021 00:00;mRNA (BioNTech / Pfizer);3;3;22.11.2021 10:47;fever;;61
+CVD2021-0027;;05.11.2021 07:24;2;;mRNA (BioNTech / Pfizer);1;1;05.11.2021 07:24;fever;AY.43;9
+CVD2021-0028;;11.11.2021 11:48;-nicht erhoben-;05.07.2021 00:00;vektorbasiert (Johnson&Johnson bzw. Janssen-Cilag);5;5;11.11.2021 11:48;fever;;36
+CVD2021-0029;;21.11.2021 15:43;2;26.05.2021 00:00;mRNA  (Moderna);2;2;21.11.2021 15:43;fever;;88
+CVD2021-0030;;10.11.2021 14:28;-nicht erhoben-;02.11.2021 00:00;Kombination AstraZeneca/Moderna;0;0;10.11.2021 14:28;fever;AY.44;6
+CVD2021-0031;Z01;26.11.2021 13:22;-nicht erhoben-;13.06.2021 00:00;mRNA (BioNTech / Pfizer);0;0;26.11.2021 13:22;fever;;25
+CVD2021-0032;Z02;24.11.2021 08:02;2;;mRNA (BioNTech / Pfizer);0;0;24.11.2021 08:02;fever;;22
+CVD2021-0033;Z03;21.11.2021 12:54;2;;mRNA (BioNTech / Pfizer);2;2;21.11.2021 12:54;fever;AY.43.8;44
+CVD2021-0034;Z04;07.11.2021 08:24;2;15.07.2021 00:00;-nicht erhoben-;1;1;07.11.2021 08:24;fever;;1
+CVD2021-0035;Z05;06.11.2021 17:36;2;29.06.2021 00:00;-nicht erhoben-;7;7;06.11.2021 17:36;fever;AY.122;92
+CVD2021-0036;Z06;07.11.2021 08:38;2;06.07.2021 00:00;-nicht erhoben-;0;0;07.11.2021 08:38;fever;B.1.617.2;41
+CVD2021-0037;Z07;20.11.2021 12:32;-nicht erhoben-;;vektorbasiert (Astra Zeneca);0;0;20.11.2021 12:32;fever;;17
+CVD2021-0038;Z08;26.11.2021 08:18;-nicht erhoben-;;mRNA (BioNTech / Pfizer);1;1;26.11.2021 08:18;fever;;27
+CVD2021-0039;Z09;30.11.2021 11:07;1;15.07.2021 00:00;mRNA (BioNTech / Pfizer);0;0;30.11.2021 11:07;fever;;20
+CVD2021-0040;Z010;11.11.2021 08:40;2;06.06.2021 00:00;mRNA  (Moderna);0;0;11.11.2021 08:40;fever;AY.34;16
+CVD2021-0041;Z011;19.11.2021 14:29;2;08.09.2021 00:00;-nicht erhoben-;9;9;19.11.2021 14:29;fever;;4
+CVD2021-0042;Z012;06.11.2021 16:35;2;29.06.2021 00:00;-nicht erhoben-;0;0;06.11.2021 16:35;fever;;85
+CVD2021-0043;Z013;10.11.2021 08:46;2;;mRNA (BioNTech / Pfizer);3;3;10.11.2021 08:46;fever;;91
+CVD2021-0044;Z014;30.11.2021 09:47;-nicht erhoben-;28.07.2021 00:00;mRNA (BioNTech / Pfizer);4;4;30.11.2021 09:47;fever;AY.122;89
+CVD2021-0045;Z015;30.11.2021 09:36;-nicht erhoben-;10.06.2021 00:00;mRNA (BioNTech / Pfizer);7;7;30.11.2021 09:36;fever;AY.122;39
+CVD2021-0046;Z016;14.11.2021 08:19;2;06.07.2021 00:00;-nicht erhoben-;0;0;14.11.2021 08:19;fever;B.1.617.2;20
+CVD2021-0047;Z017;10.11.2021 10:06;2;;mRNA (BioNTech / Pfizer);2;2;10.11.2021 10:06;fever;;23
+CVD2021-0048;Z018;23.11.2021 15:50;1;29.07.2021 00:00;mRNA (BioNTech / Pfizer);0;0;23.11.2021 15:50;fever;B.1.617.2;86
+CVD2021-0049;Z019;09.11.2021 10:05;-nicht erhoben-;;-nicht erhoben-;1;1;09.11.2021 10:05;fever;AY.43,AY.43;27
+CVD2021-0050;Z020;21.11.2021 13:11;2;20.08.2021 00:00;mRNA (BioNTech / Pfizer);1;1;21.11.2021 13:11;fever;;99
+CVD2021-0051;Z021;29.11.2021 14:06;-nicht erhoben-;04.04.2021 00:00;mRNA (BioNTech / Pfizer);0;0;29.11.2021 14:06;fever;;69
+CVD2021-0052;Z022;28.11.2021 10:19;2;02.06.2021 00:00;mRNA (BioNTech / Pfizer);1;1;28.11.2021 10:19;fever;AY.122;19
+CVD2021-0053;Z023;26.11.2021 09:12;-nicht erhoben-;;mRNA  (Moderna);0;0;26.11.2021 09:12;fever;;81
+CVD2021-0054;Z024;28.11.2021 14:10;2;09.07.2021 00:00;-nicht erhoben-;6;6;28.11.2021 14:10;fever;;23
+CVD2021-0055;Z025;25.11.2021 12:08;-nicht erhoben-;16.11.2021 00:00;mRNA (BioNTech / Pfizer);1;1;25.11.2021 12:08;fever;AY.122;65
+CVD2021-0056;Z026;09.11.2021 07:28;2;;-nicht erhoben-;0;0;09.11.2021 07:28;fever;;42
+CVD2021-0057;Z027;21.11.2021 09:06;2;;mRNA (BioNTech / Pfizer);1;1;21.11.2021 09:06;fever;;30
+CVD2021-0058;Z028;22.11.2021 08:23;-nicht erhoben-;25.10.2021 00:00;vektorbasiert (Johnson&Johnson bzw. Janssen-Cilag);0;0;22.11.2021 08:23;fever;;39
+CVD2021-0059;Z029;07.11.2021 08:22;2;27.07.2021 00:00;mRNA  (Moderna);2;2;07.11.2021 08:22;fever;;18
+CVD2021-0060;Z030;03.11.2021 07:57;-nicht erhoben-;06.08.2021 00:00;-nicht erhoben-;0;0;03.11.2021 07:57;fever;AY.43.8;72
+CVD2021-0061;Z031;02.11.2021 16:38;2;15.09.2021 00:00;Kombination AstraZeneca/Moderna;2;2;02.11.2021 16:38;fever;AY.43;47
+CVD2021-0062;Z032;11.11.2021 09:36;-nicht erhoben-;27.08.2021 00:00;mRNA (BioNTech / Pfizer);0;0;11.11.2021 09:36;fever;B.1.617.2;58
+CVD2021-0063;Z033;17.11.2021 08:58;2;28.05.2021 00:00;mRNA (BioNTech / Pfizer);2;2;17.11.2021 08:58;fever;;31
+CVD2021-0064;Z034;19.11.2021 09:56;2;;-nicht erhoben-;2;2;19.11.2021 09:56;fever;;80
+CVD2021-0065;Z035;05.11.2021 11:18;2;;-nicht erhoben-;0;0;05.11.2021 11:18;fever;;79
+CVD2021-0066;Z036;14.11.2021 08:12;2;;vektorbasiert (Johnson&Johnson bzw. Janssen-Cilag);0;0;14.11.2021 08:12;fever;;65
+CVD2021-0067;Z037;10.11.2021 09:23;2;06.05.2021 00:00;mRNA (BioNTech / Pfizer);0;0;10.11.2021 09:23;fever;;27
+CVD2021-0068;Z038;11.11.2021 13:09;-nicht erhoben-;;-nicht erhoben-;1;1;11.11.2021 13:09;fever;;91
+CVD2021-0069;Z039;04.11.2021 09:22;-nicht erhoben-;;mRNA (BioNTech / Pfizer);0;0;04.11.2021 09:22;fever;;96
+CVD2021-0070;Z040;18.11.2021 15:14;-nicht erhoben-;22.07.2021 00:00;mRNA (BioNTech / Pfizer);2;2;18.11.2021 15:14;fever;;4
+CVD2021-0071;Z041;12.11.2021 09:19;-nicht erhoben-;;Kombination AstraZeneca/BioNTech;0;0;12.11.2021 09:19;fever;;3
+CVD2021-0072;Z042;28.11.2021 15:42;2;;-nicht erhoben-;3;3;28.11.2021 15:42;fever;;63
+CVD2021-0073;Z043;16.11.2021 07:44;-nicht erhoben-;;vektorbasiert (Johnson&Johnson bzw. Janssen-Cilag);0;0;16.11.2021 07:44;fever;;54
+CVD2021-0074;Z044;30.11.2021 07:45;2;21.10.2021 00:00;mRNA (BioNTech / Pfizer);2;2;30.11.2021 07:45;fever;AY.43.8;8
+CVD2021-0075;Z045;16.11.2021 14:07;-nicht erhoben-;;mRNA (BioNTech / Pfizer);1;1;16.11.2021 14:07;fever;;23
+CVD2021-0076;Z046;03.11.2021 09:39;1;;mRNA (BioNTech / Pfizer);0;0;03.11.2021 09:39;fever;;94
+CVD2021-0077;Z047;11.11.2021 16:46;-nicht erhoben-;08.06.2021 00:00;mRNA (BioNTech / Pfizer);1;1;11.11.2021 16:46;fever;;41
+CVD2021-0078;Z048;17.11.2021 07:18;2;;mRNA (BioNTech / Pfizer);0;0;17.11.2021 07:18;fever;;4
+CVD2021-0079;Z049;28.11.2021 14:30;2;22.08.2021 00:00;-nicht erhoben-;2;2;28.11.2021 14:30;fever;;65
+CVD2021-0080;Z050;26.11.2021 09:05;2;18.06.2021 00:00;mRNA (BioNTech / Pfizer);0;0;26.11.2021 09:05;fever;;37
+CVD2021-0081;Z051;12.11.2021 11:39;-nicht erhoben-;12.06.2021 00:00;mRNA (BioNTech / Pfizer);6;6;12.11.2021 11:39;fever;;67
+CVD2021-0082;Z052;24.11.2021 14:47;-nicht erhoben-;07.07.2021 00:00;mRNA (BioNTech / Pfizer);2;2;24.11.2021 14:47;fever;;33
+CVD2021-0083;Z053;30.11.2021 10:05;2;10.05.2021 00:00;-andere/sonstige-;1;1;30.11.2021 10:05;fever;;19
+CVD2021-0084;Z054;10.11.2021 09:56;-nicht erhoben-;;mRNA (BioNTech / Pfizer);1;1;10.11.2021 09:56;fever;;24
+CVD2021-0085;Z055;19.11.2021 11:37;2;21.09.2021 00:00;-nicht erhoben-;2;2;19.11.2021 11:37;fever;AY.43.8;23
+CVD2021-0086;Z056;24.11.2021 10:11;2;13.10.2021 00:00;mRNA (BioNTech / Pfizer);3;3;24.11.2021 10:11;fever;AY.46.6;7
+CVD2021-0087;Z057;24.11.2021 10:53;3;19.06.2021 00:00;vektorbasiert (Johnson&Johnson bzw. Janssen-Cilag);5;5;24.11.2021 10:53;fever;;48
+CVD2021-0088;Z058;20.11.2021 17:34;-nicht erhoben-;21.05.2021 00:00;mRNA (BioNTech / Pfizer);0;0;20.11.2021 17:34;fever;AY.46.6;95
+CVD2021-0089;Z059;27.11.2021 17:36;2;;mRNA (BioNTech / Pfizer);1;1;27.11.2021 17:36;fever;;14
+CVD2021-0090;Z060;03.11.2021 13:30;-nicht erhoben-;21.08.2021 00:00;mRNA  (Moderna);1;1;03.11.2021 13:30;fever;;94
+CVD2021-0091;Z061;20.11.2021 10:18;2;;mRNA  (Moderna);0;0;20.11.2021 10:18;fever;;62
+CVD2021-0092;Z062;22.11.2021 09:55;2;;mRNA (BioNTech / Pfizer);3;3;22.11.2021 09:55;fever;;25
+CVD2021-0093;Z063;07.11.2021 09:31;1;;mRNA (BioNTech / Pfizer);2;2;07.11.2021 09:31;fever;;23
+CVD2021-0094;Z064;30.11.2021 08:21;-nicht erhoben-;04.06.2021 00:00;-nicht erhoben-;1;1;30.11.2021 08:21;fever;;11
+CVD2021-0095;Z065;28.11.2021 11:19;-nicht erhoben-;24.09.2021 00:00;mRNA (BioNTech / Pfizer);0;0;28.11.2021 11:19;fever;;52
+CVD2021-0096;Z066;30.11.2021 10:49;-nicht erhoben-;;mRNA (BioNTech / Pfizer);4;4;30.11.2021 10:49;fever;;44
+CVD2021-0097;Z067;01.11.2021 08:00;-nicht erhoben-;;mRNA (BioNTech / Pfizer);2;2;01.11.2021 08:00;fever;;41
+CVD2021-0098;Z068;25.11.2021 17:41;-nicht erhoben-;28.07.2021 00:00;-nicht erhoben-;1;1;25.11.2021 17:41;fever;;8
+CVD2021-0099;Z069;21.11.2021 11:33;2;;mRNA (BioNTech / Pfizer);0;0;21.11.2021 11:33;fever;;12
+CVD2021-00100;Z070;03.11.2021 10:10;2;14.07.2021 00:00;mRNA (BioNTech / Pfizer);2;2;03.11.2021 10:10;fever;;54
